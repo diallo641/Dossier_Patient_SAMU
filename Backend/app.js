@@ -3,6 +3,7 @@ const cors = require("cors");
 require("dotenv").config();
 
 // Import des routes (exemples)
+const roleRoutes = require("./routes/roleRoutes");
 const authRoutes = require("./routes/authRoutes");
 const employeRoutes = require("./routes/employeRoutes");
 const medecinRoutes = require("./routes/medecinRoutes");
@@ -16,9 +17,7 @@ app.use(express.json()); // pour lire JSON
 
 
 //ROUTES
-app.use("/api/auth", authRoutes);
-app.use("/api/employes", employeRoutes);
-app.use("/api/medecins", medecinRoutes);
+app.use("/api/roles", roleRoutes);
 
 
 //ROUTE pour tester
