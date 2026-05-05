@@ -4,6 +4,7 @@ require("dotenv").config();
 
 // Import des routes (exemples)
 const roleRoutes = require("./routes/roleRoutes");
+const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const employeRoutes = require("./routes/employeRoutes");
 const medecinRoutes = require("./routes/medecinRoutes");
@@ -18,6 +19,7 @@ app.use(express.json()); // pour lire JSON
 
 //ROUTES
 app.use("/api/roles", roleRoutes);
+app.use("/api/users", userRoutes);
 
 
 //ROUTE pour tester
