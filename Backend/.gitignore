@@ -1,3 +1,2 @@
 .env
-/nodes_modules
-/dist
+**/nodes_modules
