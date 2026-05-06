@@ -108,3 +108,40 @@ exports.getUserStats = async () => {
     par_role: byRole
   };
 };
+
+
+// =============================
+// 🔐 SAVE RESET TOKEN
+// =============================
+exports.saveResetToken = async (email, token, expires) => {
+  await db.query(
+    `UPDATE utilisateur 
+     SET reset_token = ?, reset_expires = ?
+     WHERE email = ?`,
+    [token, expires, email]
+  );
+};
+
+// =============================
+// 🔎 GET USER BY RESET TOKEN
+// =============================
+exports.getUserByResetToken = async (token) => {
+  const [rows] = await db.query(
+    `SELECT * FROM utilisateur 
+     WHERE reset_token = ? AND reset_expires > NOW()`,
+    [token]
+  );
+  return rows[0];
+};
+
+// =============================
+// 🔐 CLEAR RESET TOKEN
+// =============================
+exports.clearResetToken = async (id) => {
+  await db.query(
+    `UPDATE utilisateur 
+     SET reset_token = NULL, reset_expires = NULL
+     WHERE id = ?`,
+    [id]
+  );
+};

@@ -1,6 +1,12 @@
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const generateToken = require("../utils/generateToken");
+const crypto = require("crypto");
+const db = require("../config/db");
+const sendEmail = require("../utils/sendEmail");
+
+
+
 
 // =============================
 // REGISTER
@@ -96,7 +102,87 @@ const login = async (req, res) => {
   }
 };
 
+
+
+
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await userModel.getUserByEmail(email);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "Email introuvable",
+      });
+    }
+
+    // 🔐 token sécurisé
+    const token = crypto.randomBytes(32).toString("hex");
+
+    // ⏰ expiration 15 min
+    const expires = new Date(Date.now() + 15 * 60 * 1000);
+
+    // 💾 sauvegarde en DB
+    await userModel.saveResetToken(email, token, expires);
+
+    // 🔗 lien reset
+    const resetLink = `http://localhost:3000/reset-password?token=${token}`;
+
+    // 📩 envoi email
+    await sendEmail(
+      email,
+      "Réinitialisation de mot de passe",
+      `Clique ici pour réinitialiser ton mot de passe : ${resetLink}`
+    );
+
+    res.json({
+      message: "Email de réinitialisation envoyé",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur forgot password",
+      error: error.message,
+    });
+  }
+};
+
+
+
+
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    const user = await userModel.getUserByResetToken(token);
+
+    if (!user) {
+      return res.status(400).json({
+        message: "Token invalide ou expiré",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await userModel.updatePassword(user.id, hashedPassword);
+
+    res.json({
+      message: "Mot de passe mis à jour avec succès",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur reset password",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
+  forgotPassword,
+  resetPassword
 };
