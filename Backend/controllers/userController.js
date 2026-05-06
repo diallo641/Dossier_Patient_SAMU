@@ -1,33 +1,35 @@
 const userModel = require("../models/userModel");
 
-
-//GET ALL USERS
+// =============================
+// GET ALL USERS
+// =============================
 const getAllUsers = async (req, res) => {
   try {
     const users = await userModel.getAllUsers();
 
-    if (users.length === 0) {
+    if (!users.length) {
       return res.status(404).json({
         message: "Aucun utilisateur trouvé",
       });
     }
 
-    return res.status(200).json({
-      message: "Voici les utilisateurs",
-      taille: users.length,
-      users: users,
+    res.json({
+      message: "Liste des utilisateurs",
+      total: users.length,
+      data: users,
     });
 
   } catch (error) {
     res.status(500).json({
-      message: "Erreur récupération des utilisateurs",
+      message: "Erreur récupération utilisateurs",
       error: error.message,
     });
   }
 };
 
-
-//GET USER BY ID
+// =============================
+// GET USER BY ID
+// =============================
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -50,31 +52,31 @@ const getUserById = async (req, res) => {
   }
 };
 
-
-//CREATE USER
+// =============================
+// CREATE USER
+// =============================
 const createUser = async (req, res) => {
   try {
     const { email, mot_de_passe, id_role } = req.body;
 
     if (!email || !mot_de_passe || !id_role) {
       return res.status(400).json({
-        message: "Email, mot de passe et rôle sont obligatoires",
+        message: "Tous les champs sont obligatoires",
       });
     }
 
-    // 🔐 Vérifier si email existe déjà
     const exists = await userModel.emailExists(email);
 
     if (exists) {
       return res.status(400).json({
-        message: "Cet email est déjà utilisé",
+        message: "Email déjà utilisé",
       });
     }
 
     const id = await userModel.createUser(email, mot_de_passe, id_role);
 
     res.status(201).json({
-      message: "Utilisateur créé avec succès",
+      message: "Utilisateur créé",
       id,
     });
 
@@ -86,8 +88,9 @@ const createUser = async (req, res) => {
   }
 };
 
-
-//UPDATE USER
+// =============================
+// UPDATE USER
+// =============================
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -95,35 +98,35 @@ const updateUser = async (req, res) => {
 
     if (!email || !id_role) {
       return res.status(400).json({
-        message: "Email et rôle sont obligatoires",
+        message: "Email et rôle obligatoires",
       });
     }
 
-    // 🔐 Vérifier email (sauf lui-même)
     const exists = await userModel.emailExistsExceptUser(email, id);
 
     if (exists) {
       return res.status(400).json({
-        message: "Cet email est déjà utilisé par un autre utilisateur",
+        message: "Email déjà utilisé",
       });
     }
 
     await userModel.updateUser(id, email, id_role);
 
     res.json({
-      message: "Utilisateur modifié avec succès",
+      message: "Utilisateur mis à jour",
     });
 
   } catch (error) {
     res.status(500).json({
-      message: "Erreur modification utilisateur",
+      message: "Erreur mise à jour utilisateur",
       error: error.message,
     });
   }
 };
 
-
-//DELETE USER
+// =============================
+// DELETE USER
+// =============================
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -131,12 +134,32 @@ const deleteUser = async (req, res) => {
     await userModel.deleteUser(id);
 
     res.json({
-      message: "Utilisateur supprimé avec succès",
+      message: "Utilisateur supprimé",
     });
 
   } catch (error) {
     res.status(500).json({
       message: "Erreur suppression utilisateur",
+      error: error.message,
+    });
+  }
+};
+
+// =============================
+// STATISTIQUES
+// =============================
+const getUserStats = async (req, res) => {
+  try {
+    const stats = await userModel.getUserStats();
+
+    res.json({
+      message: "Statistiques utilisateurs",
+      data: stats,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur statistiques",
       error: error.message,
     });
   }
@@ -148,4 +171,5 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  getUserStats,
 };

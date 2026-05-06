@@ -1,25 +1,20 @@
 const express = require("express");
 const router = express.Router();
+
 const userController = require("../controllers/userController");
 
+// =============================
+// USERS
+// =============================
+router.get("/", userController.getAllUsers);          
+router.get("/:id", userController.getUserById);       
+router.post("/", userController.createUser);          
+router.put("/:id", userController.updateUser);        
+router.delete("/:id", userController.deleteUser);     
 
-//LISTER TOUS LES UTILISATEURS
-router.get("/users", userController.getAllUsers);
-
-
-//OBTENIR UN UTILISATEUR PAR ID
-router.get("/users/:id", userController.getUserById);
-
-
-//CRÉER UN UTILISATEUR
-router.post("/users", userController.createUser);
-
-
-//MODIFIER UN UTILISATEUR
-router.put("/users/:id", userController.updateUser);
-
-
-//SUPPRIMER UN UTILISATEUR
-router.delete("/users/:id", userController.deleteUser);
+// =============================
+// STATS
+// =============================
+router.get("/stats/overview", userController.getUserStats);
 
 module.exports = router;
