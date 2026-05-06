@@ -20,6 +20,7 @@ app.use(express.json()); // pour lire JSON
 //ROUTES
 app.use("/api/roles", roleRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
 
 
 //ROUTE pour tester
