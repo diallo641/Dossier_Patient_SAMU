@@ -22,6 +22,7 @@ app.use("/api/roles", roleRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/test", require("./routes/testRoutes"));
+app.use("/api/employes", employeRoutes);
 
 
 //ROUTE pour tester
