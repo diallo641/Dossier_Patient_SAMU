@@ -8,6 +8,7 @@ const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const employeRoutes = require("./routes/employeRoutes");
 const medecinRoutes = require("./routes/medecinRoutes");
+const consultationRoutes = require("./routes/consultationRoutes");
 
 const app = express();
 
@@ -23,7 +24,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/test", require("./routes/testRoutes"));
 app.use("/api/employes", employeRoutes);
-
+app.use("/api/consultations", consultationRoutes);
 
 //ROUTE pour tester
 app.get("/", (req, res) => {
