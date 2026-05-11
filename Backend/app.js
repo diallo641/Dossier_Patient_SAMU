@@ -9,6 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const employeRoutes = require("./routes/employeRoutes");
 const medecinRoutes = require("./routes/medecinRoutes");
 const consultationRoutes = require("./routes/consultationRoutes");
+const fichierMedicalRoutes = require("./routes/fichierMedicalRoutes");
 
 const app = express();
 
@@ -25,6 +26,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/test", require("./routes/testRoutes"));
 app.use("/api/employes", employeRoutes);
 app.use("/api/consultations", consultationRoutes);
+app.use("/api/fichiers", fichierMedicalRoutes);
+app.use("/uploads", express.static("uploads"));
 
 //ROUTE pour tester
 app.get("/", (req, res) => {
