@@ -3,37 +3,25 @@ const userModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 
 // =============================
-// ROLES
-// =============================
-const VALID_ROLES = [1, 2, 5];
-// 1 = Admin
-// 2 = Medecin
-// 5 = Employe
-
-// =============================
 // GET ALL EMPLOYES
 // =============================
 const getAllEmployes = async (req, res) => {
   try {
-    const employes = await employeModel.getAllEmployes();
 
-    if (!employes.length) {
-      return res.status(404).json({
-        message: "Aucun employé trouvé",
-      });
-    }
+    const data = await employeModel.getAllEmployes();
 
     res.json({
       message: "Liste des employés",
-      total: employes.length,
-      data: employes,
+      total: data.length,
+      data
     });
 
   } catch (error) {
+
     res.status(500).json({
-      message: "Erreur récupération employés",
-      error: error.message,
+      error: error.message
     });
+
   }
 };
 
@@ -42,31 +30,32 @@ const getAllEmployes = async (req, res) => {
 // =============================
 const getEmployeById = async (req, res) => {
   try {
-    const { id } = req.params;
 
-    const employe = await employeModel.getEmployeById(id);
+    const data = await employeModel.getEmployeById(req.params.id);
 
-    if (!employe) {
+    if (!data) {
       return res.status(404).json({
-        message: "Employé introuvable",
+        message: "Employé introuvable"
       });
     }
 
-    res.json(employe);
+    res.json(data);
 
   } catch (error) {
+
     res.status(500).json({
-      message: "Erreur récupération employé",
-      error: error.message,
+      error: error.message
     });
+
   }
 };
 
 // =============================
-// CREATE EMPLOYE + USER
+// CREATE EMPLOYE
 // =============================
 const createEmploye = async (req, res) => {
   try {
+
     const {
       nom,
       prenom,
@@ -76,54 +65,25 @@ const createEmploye = async (req, res) => {
       telephone,
       email,
       mot_de_passe,
-      id_role
+      id_role,
+      groupe_sanguin,
+      allergies,
+      antecedents_medicaux,
+      aptitudes_medicales
     } = req.body;
 
-    if (!email || !mot_de_passe || !nom || !prenom) {
-      return res.status(400).json({
-        message: "Champs obligatoires manquants",
-      });
-    }
-
-    // validation role
-    if (!VALID_ROLES.includes(id_role)) {
-      return res.status(400).json({
-        message: "Rôle invalide (1=Admin, 2=Medecin, 5=Employe)",
-      });
-    }
-
-    // ❌ SUPPRESSION DU BLOCAGE ADMIN
-
-    const exists = await userModel.emailExists(email);
-
-    if (exists) {
-      return res.status(400).json({
-        message: "Email déjà utilisé",
-      });
-    }
-
+    // HASH PASSWORD
     const hashedPassword = await bcrypt.hash(mot_de_passe, 10);
 
-    // 🔥 TYPE LOGIC PROPRE
-    let type = "Employe";
-
-    if (id_role === 2) {
-      type = "Medecin";
-    }
-
-    if (id_role === 1) {
-      type = "Admin";
-    }
-
     // CREATE USER
-    const id_user = await userModel.createUser(
+    const userId = await userModel.createUser(
       email,
       hashedPassword,
       id_role
     );
 
     // CREATE EMPLOYE
-    const id_employe = await employeModel.createEmploye(
+    const employeId = await employeModel.createEmploye(
       {
         nom,
         prenom,
@@ -131,160 +91,240 @@ const createEmploye = async (req, res) => {
         service,
         date_naissance,
         telephone,
-        type
+        type: "Employe",
+        groupe_sanguin,
+        allergies,
+        antecedents_medicaux,
+        aptitudes_medicales
       },
-      id_user
+      userId
     );
 
     res.status(201).json({
-      message: "Employé + utilisateur créé",
-      data: {
-        id_employe,
-        id_user,
-        type
-      },
+      message: "Employé créé avec succès",
+      employeId,
+      userId
     });
 
   } catch (error) {
+
     res.status(500).json({
-      message: "Erreur création employé",
-      error: error.message,
+      error: error.message
     });
+
   }
 };
 
 // =============================
-// UPDATE EMPLOYE + USER
+// UPDATE EMPLOYE
 // =============================
 const updateEmploye = async (req, res) => {
   try {
-    const { id } = req.params;
 
-    const {
-      nom,
-      prenom,
-      poste,
-      service,
-      date_naissance,
-      telephone,
-      email,
-      id_role
-    } = req.body;
-
-    const employe = await employeModel.getEmployeById(id);
+    const employe = await employeModel.getEmployeById(req.params.id);
 
     if (!employe) {
       return res.status(404).json({
-        message: "Employé introuvable",
+        message: "Employé introuvable"
       });
     }
 
-    if (!VALID_ROLES.includes(id_role)) {
-      return res.status(400).json({
-        message: "Rôle invalide",
-      });
-    }
-
-    // ❌ SUPPRESSION DU BLOCAGE ADMIN
-
-    const exists = await userModel.emailExistsExceptUser(
-      email,
-      employe.user_id
-    );
-
-    if (exists) {
-      return res.status(400).json({
-        message: "Email déjà utilisé",
-      });
-    }
-
-    // TYPE LOGIC
-    let type = "Employe";
-
-    if (id_role === 2) {
-      type = "Medecin";
-    }
-
-    if (id_role === 1) {
-      type = "Admin";
-    }
-
-    await employeModel.updateEmploye(id, {
-      nom,
-      prenom,
-      poste,
-      service,
-      date_naissance,
-      telephone,
-      type
-    });
-
-    await userModel.updateUser(
-      employe.user_id,
-      email,
-      id_role
+    await employeModel.updateEmploye(
+      req.params.id,
+      req.body
     );
 
     res.json({
-      message: "Employé et utilisateur mis à jour",
-      type
+      message: "Employé mis à jour avec succès"
     });
 
   } catch (error) {
+
     res.status(500).json({
-      message: "Erreur mise à jour employé",
-      error: error.message,
+      error: error.message
     });
+
   }
 };
 
 // =============================
-// DELETE EMPLOYE + USER
+// DELETE EMPLOYE
 // =============================
 const deleteEmploye = async (req, res) => {
   try {
-    const { id } = req.params;
 
-    const employe = await employeModel.getEmployeById(id);
+    const employe = await employeModel.getEmployeById(req.params.id);
 
     if (!employe) {
       return res.status(404).json({
-        message: "Employé introuvable",
+        message: "Employé introuvable"
       });
     }
 
-    await employeModel.deleteEmploye(id);
-
-    if (employe.user_id) {
-      await userModel.deleteUser(employe.user_id);
-    }
+    await employeModel.deleteEmploye(req.params.id);
 
     res.json({
-      message: "Employé et utilisateur supprimés",
+      message: "Employé supprimé avec succès"
     });
 
   } catch (error) {
+
     res.status(500).json({
-      message: "Erreur suppression employé",
-      error: error.message,
+      error: error.message
     });
+
   }
 };
 
-const getEmployeStats = async (req, res) => {
+// =============================
+// TOTAL EMPLOYES
+// =============================
+const getTotalEmployes = async (req, res) => {
   try {
-    const stats = await employeModel.getEmployeStats();
 
-    res.json({
-      message: "Statistiques employés",
-      data: stats,
-    });
+    const data = await employeModel.getTotalEmployes();
+
+    res.json(data);
 
   } catch (error) {
+
     res.status(500).json({
-      message: "Erreur statistiques employés",
-      error: error.message,
+      error: error.message
     });
+
+  }
+};
+
+// =============================
+// EMPLOYES PAR SERVICE
+// =============================
+const getEmployesByService = async (req, res) => {
+  try {
+
+    const data = await employeModel.getEmployesByService();
+
+    res.json(data);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message
+    });
+
+  }
+};
+
+// =============================
+// EMPLOYES PAR ROLE
+// =============================
+const getEmployesByRole = async (req, res) => {
+  try {
+
+    const data = await employeModel.getEmployesByRole();
+
+    res.json(data);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message
+    });
+
+  }
+};
+
+// =============================
+// EMPLOYES PAR TYPE
+// =============================
+const getEmployesByType = async (req, res) => {
+  try {
+
+    const data = await employeModel.getEmployesByType();
+
+    res.json(data);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message
+    });
+
+  }
+};
+
+// =============================
+// EMPLOYES PAR GROUPE SANGUIN
+// =============================
+const getEmployesByBloodGroup = async (req, res) => {
+  try {
+
+    const data = await employeModel.getEmployesByBloodGroup();
+
+    res.json(data);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message
+    });
+
+  }
+};
+
+// =============================
+// EMPLOYES PAR ALLERGIES
+// =============================
+const getEmployesByAllergies = async (req, res) => {
+  try {
+
+    const data = await employeModel.getEmployesByAllergies();
+
+    res.json(data);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message
+    });
+
+  }
+};
+
+// =============================
+// EMPLOYES PAR ANTECEDENTS
+// =============================
+const getEmployesByAntecedents = async (req, res) => {
+  try {
+
+    const data = await employeModel.getEmployesByAntecedents();
+
+    res.json(data);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message
+    });
+
+  }
+};
+
+// =============================
+// EMPLOYES PAR APTITUDES
+// =============================
+const getEmployesByAptitudes = async (req, res) => {
+  try {
+
+    const data = await employeModel.getEmployesByAptitudes();
+
+    res.json(data);
+
+  } catch (error) {
+
+    res.status(500).json({
+      error: error.message
+    });
+
   }
 };
 
@@ -294,5 +334,12 @@ module.exports = {
   createEmploye,
   updateEmploye,
   deleteEmploye,
-  getEmployeStats
+  getTotalEmployes,
+  getEmployesByService,
+  getEmployesByRole,
+  getEmployesByType,
+  getEmployesByBloodGroup,
+  getEmployesByAllergies,
+  getEmployesByAntecedents,
+  getEmployesByAptitudes
 };

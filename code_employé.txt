@@ -1,0 +1,447 @@
+const db = require("../config/db");
+
+// =============================
+// GET ALL EMPLOYES (JOIN USER)
+// =============================
+exports.getAllEmployes = async () => {
+  const [rows] = await db.query(`
+    SELECT 
+      e.id,
+      e.nom,
+      e.prenom,
+      e.poste,
+      e.service,
+      e.date_naissance,
+      e.telephone,
+      e.type,
+      u.id AS user_id,
+      u.email,
+      u.id_role,
+      e.created_at,
+      e.updated_at
+    FROM employe e
+    JOIN utilisateur u ON e.id_utilisateur = u.id
+  `);
+
+  return rows;
+};
+
+// =============================
+// GET EMPLOYE BY ID
+// =============================
+exports.getEmployeById = async (id) => {
+  const [rows] = await db.query(`
+    SELECT 
+  e.*,
+  u.id AS user_id,
+  u.email,
+  u.id_role
+FROM employe e
+JOIN utilisateur u ON e.id_utilisateur = u.id
+WHERE e.id = ?
+  `, [id]);
+
+  return rows[0];
+};
+
+// =============================
+// CREATE EMPLOYE
+// =============================
+exports.createEmploye = async (data, id_utilisateur) => {
+  const [result] = await db.query(`
+    INSERT INTO employe
+    (nom, prenom, poste, service, date_naissance, telephone, type, id_utilisateur)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `, [
+    data.nom,
+    data.prenom,
+    data.poste,
+    data.service,
+    data.date_naissance,
+    data.telephone,
+    data.type || "Employe",
+    id_utilisateur
+  ]);
+
+  return result.insertId;
+};
+
+// =============================
+// UPDATE EMPLOYE
+// =============================
+exports.updateEmploye = async (id, data) => {
+  await db.query(`
+    UPDATE employe
+    SET nom = ?, prenom = ?, poste = ?, service = ?, date_naissance = ?, telephone = ?
+    WHERE id = ?
+  `, [
+    data.nom,
+    data.prenom,
+    data.poste,
+    data.service,
+    data.date_naissance,
+    data.telephone,
+    id
+  ]);
+};
+
+// =============================
+// DELETE EMPLOYE
+// =============================
+exports.deleteEmploye = async (id) => {
+  await db.query(`DELETE FROM employe WHERE id = ?`, [id]);
+};
+
+exports.getEmployeStats = async () => {
+  const [total] = await db.query(
+    "SELECT COUNT(*) AS total FROM employe"
+  );
+
+  const [byService] = await db.query(`
+    SELECT service, COUNT(*) AS total
+    FROM employe
+    GROUP BY service
+  `);
+
+  const [byRole] = await db.query(`
+    SELECT u.id_role, COUNT(e.id) AS total
+    FROM employe e
+    JOIN utilisateur u ON e.id_utilisateur = u.id
+    GROUP BY u.id_role
+  `);
+
+  return {
+    total_employes: total[0].total,
+    par_service: byService,
+    par_role: byRole
+  };
+};
+
+
+
+controller: 
+const employeModel = require("../models/employeModel");
+const userModel = require("../models/userModel");
+const bcrypt = require("bcrypt");
+
+// =============================
+// ROLES
+// =============================
+const VALID_ROLES = [1, 2, 5];
+// 1 = Admin
+// 2 = Medecin
+// 5 = Employe
+
+// =============================
+// GET ALL EMPLOYES
+// =============================
+const getAllEmployes = async (req, res) => {
+  try {
+    const employes = await employeModel.getAllEmployes();
+
+    if (!employes.length) {
+      return res.status(404).json({
+        message: "Aucun employé trouvé",
+      });
+    }
+
+    res.json({
+      message: "Liste des employés",
+      total: employes.length,
+      data: employes,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur récupération employés",
+      error: error.message,
+    });
+  }
+};
+
+// =============================
+// GET EMPLOYE BY ID
+// =============================
+const getEmployeById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const employe = await employeModel.getEmployeById(id);
+
+    if (!employe) {
+      return res.status(404).json({
+        message: "Employé introuvable",
+      });
+    }
+
+    res.json(employe);
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur récupération employé",
+      error: error.message,
+    });
+  }
+};
+
+// =============================
+// CREATE EMPLOYE + USER
+// =============================
+const createEmploye = async (req, res) => {
+  try {
+    const {
+      nom,
+      prenom,
+      poste,
+      service,
+      date_naissance,
+      telephone,
+      email,
+      mot_de_passe,
+      id_role
+    } = req.body;
+
+    if (!email || !mot_de_passe || !nom || !prenom) {
+      return res.status(400).json({
+        message: "Champs obligatoires manquants",
+      });
+    }
+
+    // validation role
+    if (!VALID_ROLES.includes(id_role)) {
+      return res.status(400).json({
+        message: "Rôle invalide (1=Admin, 2=Medecin, 5=Employe)",
+      });
+    }
+
+    // ❌ SUPPRESSION DU BLOCAGE ADMIN
+
+    const exists = await userModel.emailExists(email);
+
+    if (exists) {
+      return res.status(400).json({
+        message: "Email déjà utilisé",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(mot_de_passe, 10);
+
+    // 🔥 TYPE LOGIC PROPRE
+    let type = "Employe";
+
+    if (id_role === 2) {
+      type = "Medecin";
+    }
+
+    if (id_role === 1) {
+      type = "Admin";
+    }
+
+    // CREATE USER
+    const id_user = await userModel.createUser(
+      email,
+      hashedPassword,
+      id_role
+    );
+
+    // CREATE EMPLOYE
+    const id_employe = await employeModel.createEmploye(
+      {
+        nom,
+        prenom,
+        poste,
+        service,
+        date_naissance,
+        telephone,
+        type
+      },
+      id_user
+    );
+
+    res.status(201).json({
+      message: "Employé + utilisateur créé",
+      data: {
+        id_employe,
+        id_user,
+        type
+      },
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur création employé",
+      error: error.message,
+    });
+  }
+};
+
+// =============================
+// UPDATE EMPLOYE + USER
+// =============================
+const updateEmploye = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const {
+      nom,
+      prenom,
+      poste,
+      service,
+      date_naissance,
+      telephone,
+      email,
+      id_role
+    } = req.body;
+
+    const employe = await employeModel.getEmployeById(id);
+
+    if (!employe) {
+      return res.status(404).json({
+        message: "Employé introuvable",
+      });
+    }
+
+    if (!VALID_ROLES.includes(id_role)) {
+      return res.status(400).json({
+        message: "Rôle invalide",
+      });
+    }
+
+    // ❌ SUPPRESSION DU BLOCAGE ADMIN
+
+    const exists = await userModel.emailExistsExceptUser(
+      email,
+      employe.user_id
+    );
+
+    if (exists) {
+      return res.status(400).json({
+        message: "Email déjà utilisé",
+      });
+    }
+
+    // TYPE LOGIC
+    let type = "Employe";
+
+    if (id_role === 2) {
+      type = "Medecin";
+    }
+
+    if (id_role === 1) {
+      type = "Admin";
+    }
+
+    await employeModel.updateEmploye(id, {
+      nom,
+      prenom,
+      poste,
+      service,
+      date_naissance,
+      telephone,
+      type
+    });
+
+    await userModel.updateUser(
+      employe.user_id,
+      email,
+      id_role
+    );
+
+    res.json({
+      message: "Employé et utilisateur mis à jour",
+      type
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur mise à jour employé",
+      error: error.message,
+    });
+  }
+};
+
+// =============================
+// DELETE EMPLOYE + USER
+// =============================
+const deleteEmploye = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const employe = await employeModel.getEmployeById(id);
+
+    if (!employe) {
+      return res.status(404).json({
+        message: "Employé introuvable",
+      });
+    }
+
+    await employeModel.deleteEmploye(id);
+
+    if (employe.user_id) {
+      await userModel.deleteUser(employe.user_id);
+    }
+
+    res.json({
+      message: "Employé et utilisateur supprimés",
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur suppression employé",
+      error: error.message,
+    });
+  }
+};
+
+const getEmployeStats = async (req, res) => {
+  try {
+    const stats = await employeModel.getEmployeStats();
+
+    res.json({
+      message: "Statistiques employés",
+      data: stats,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur statistiques employés",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = {
+  getAllEmployes,
+  getEmployeById,
+  createEmploye,
+  updateEmploye,
+  deleteEmploye,
+  getEmployeStats
+};
+
+
+route: 
+
+const express = require("express");
+const router = express.Router();
+
+const employeController = require("../controllers/employeController");
+const authMiddleware = require("../middlewares/authMiddleware");
+const roleMiddleware = require("../middlewares/roleMiddleware");
+
+// =============================
+// EMPLOYES
+// =============================
+router.get("/", authMiddleware, roleMiddleware(["Admin", "Medecin"]), employeController.getAllEmployes);
+
+router.get("UnEmploye/:id", authMiddleware, roleMiddleware(["Admin", "Medecin"]), employeController.getEmployeById);
+
+router.post("/", authMiddleware, roleMiddleware(["Admin", "Medecin"]), employeController.createEmploye);
+
+router.put("/:id", authMiddleware, roleMiddleware(["Admin", "Medecin"]), employeController.updateEmploye);
+
+router.delete("/:id", authMiddleware, roleMiddleware(["Admin", "Medecin"]), employeController.deleteEmploye);
+
+router.get("/stats", employeController.getEmployeStats);
+
+module.exports = router;
