@@ -97,8 +97,6 @@ router.get(
 // CREATE
 router.post(
   "/",
-  authMiddleware,
-  roleMiddleware(["Admin", "Medecin"]),
   employeController.createEmploye
 );
 
