@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import BoutonDeconnexion from "../composants/BoutonDeconnexion";
 
 export default function Home() {
   return (
@@ -29,6 +30,8 @@ export default function Home() {
             <Link to="/inscription" className="px-4 py-2 rounded-lg border-2 border-blue-600 text-blue-700 hover:bg-blue-50">
               Inscription
             </Link>
+
+            <BoutonDeconnexion />
           </div>
 
         </div>
