@@ -101,10 +101,6 @@ const login = async (req, res) => {
     });
   }
 };
-
-
-
-
 const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -127,7 +123,7 @@ const forgotPassword = async (req, res) => {
     await userModel.saveResetToken(email, token, expires);
 
     // 🔗 lien reset
-    const resetLink = `http://localhost:3000/reset-password?token=${token}`;
+    const resetLink = `http://localhost:5173/reset-password?token=${token}`;
 
     // 📩 envoi email
     await sendEmail(
