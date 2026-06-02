@@ -5,6 +5,7 @@ import ForgotPassword from "./pages/authentification/ForgotPassword";
 import ResetPassword from "./pages/authentification/ResetPassword";
 import Home from "./pages/Home";
 import DashboardAdmin from "./pages/Admin/DashboardAdmin";
+import Inscription from "./pages/Autres/Inscription";
 import { AuthProvider } from "./context/AuthContext";
 
 export default function App() {
@@ -22,7 +23,7 @@ export default function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/dashboard-admin" element={<DashboardAdmin />} />
-
+          <Route path="/inscription" element={<Inscription />} />
           {/* fallback (optionnel mais pro) */}
           <Route path="*" element={<Navigate to="/" />} />
 

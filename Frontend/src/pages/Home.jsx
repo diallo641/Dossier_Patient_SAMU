@@ -26,7 +26,7 @@ export default function Home() {
               Connexion
             </Link>
 
-            <Link to="/register" className="px-4 py-2 rounded-lg border-2 border-blue-600 text-blue-700 hover:bg-blue-50">
+            <Link to="/inscription" className="px-4 py-2 rounded-lg border-2 border-blue-600 text-blue-700 hover:bg-blue-50">
               Inscription
             </Link>
           </div>

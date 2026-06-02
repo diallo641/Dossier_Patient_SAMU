@@ -109,7 +109,7 @@ function Connexion() {
           <p className="text-center text-sm mt-6 text-gray-600">
             Pas de compte ?{" "}
             <Link
-              to="/register"
+              to="/inscription"
               className="text-emerald-600 font-semibold hover:underline"
             >
               Créer un compte
