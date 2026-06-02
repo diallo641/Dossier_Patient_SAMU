@@ -60,14 +60,15 @@ const getAllFichiersMedicaux = async () => {
 // ==============================
 const getFichierMedicalById = async (id) => {
   const sql = `
-    SELECT 
-      fm.*,
-      u.nom AS uploaded_by_nom
-    FROM fichier_medical fm
-    LEFT JOIN utilisateur u 
-      ON fm.uploaded_by = u.id
-    WHERE fm.id = ?
-  `;
+  SELECT 
+    fm.*,
+    e.nom AS uploaded_by_nom,
+    e.prenom AS uploaded_by_prenom
+  FROM fichier_medical fm
+  LEFT JOIN employe e 
+    ON fm.uploaded_by = e.id_utilisateur
+  ORDER BY fm.date_upload DESC
+`;
 
   const [rows] = await db.query(sql, [id]);
 
