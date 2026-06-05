@@ -10,6 +10,8 @@ import Employes from "./pages/Admin/Employes";
 import FichierMedicaux from "./pages/Admin/FichiersMedicaux";
 import Utilisateurs from "./pages/Admin/Utilisateurs";
 import ModifierEmploye from "./pages/Admin/ModifierEmploye";
+import ModifierConsultation from "./pages/Admin/ModifierConsultation";
+import AjouterConsultation from "./pages/Consultations/AjouterConsultation";
 import Inscription from "./pages/Autres/Inscription";
 import { AuthProvider } from "./context/AuthContext";
 
@@ -34,7 +36,8 @@ export default function App() {
           <Route path="/fichiers-medicaux" element={<FichierMedicaux />} />
           <Route path="/utilisateurs" element={<Utilisateurs />} />
           <Route path="/modifier-employe/:id" element={<ModifierEmploye />} />
-
+          <Route path="/modifier-consultation/:id" element={<ModifierConsultation />} />
+          <Route path="/ajouter-consultation" element={<AjouterConsultation />} />
           {/* fallback (optionnel mais pro) */}
           <Route path="*" element={<Navigate to="/" />} />
 

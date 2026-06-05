@@ -102,6 +102,13 @@ router.put(
   controller.updateConsultation
 );
 
+router.put(
+  "/admin/:id",
+  authMiddleware,
+  roleMiddleware(["Admin"]),
+  controller.updateConsultationAdmin
+);
+
 // =============================
 // DELETE CONSULTATION
 // =============================

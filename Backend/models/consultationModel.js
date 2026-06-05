@@ -37,11 +37,11 @@ exports.getAllConsultations = async () => {
   const [rows] = await db.query(`
     SELECT c.*, 
            e.nom AS employe_nom, e.prenom AS employe_prenom,
-           u.email AS medecin_email
+           m.nom AS medecin_nom, m.prenom AS medecin_prenom
     FROM consultation c
-    JOIN employe e ON c.id_employe = e.id
-    JOIN utilisateur u ON c.id_medecin = u.id
-    ORDER BY c.date_consultation DESC
+    LEFT JOIN employe e ON c.id_employe = e.id
+    LEFT JOIN employe m ON c.id_medecin = m.id
+    ORDER BY c.created_at ASC
   `);
 
   return rows;
@@ -87,6 +87,17 @@ exports.updateConsultation = async (id, data) => {
   );
 };
 
+exports.updateConsultationAdmin = async (id, data) => {
+  const { date_consultation, motif } = data;
+
+  await db.query(
+    `UPDATE consultation 
+     SET date_consultation = ?, motif = ?
+     WHERE id = ?`,
+    [date_consultation, motif, id]
+  );
+};
+
 
 // DELETE
 exports.deleteConsultation = async (id) => {
@@ -104,7 +115,7 @@ exports.deleteConsultation = async (id) => {
 exports.getTotalConsultations = async () => {
   const [rows] = await db.query(`
     SELECT COUNT(*) AS total
-    FROM consultation
+    FROM consultation 
   `);
 
   return rows[0];

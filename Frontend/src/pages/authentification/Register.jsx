@@ -61,7 +61,7 @@ function Register() {
         aptitudes_medicales: "",
       });
 
-      setTimeout(() => navigate("/login"), 1200);
+      setTimeout(() => navigate("/employes"), 1200);
 
     } catch (err) {
       setErreur(err.message || "Erreur serveur");

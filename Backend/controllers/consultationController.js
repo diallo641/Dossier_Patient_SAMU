@@ -104,6 +104,26 @@ const updateConsultation = async (req, res) => {
   }
 };
 
+
+const updateConsultationAdmin = async (req, res) => {
+  try {
+    await consultationModel.updateConsultationAdmin(
+      req.params.id,
+      req.body
+    );
+
+    res.json({
+      message: "Consultation modifiée par admin"
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur update admin",
+      error: error.message
+    });
+  }
+};
+
 // =============================
 // DELETE
 // =============================
@@ -252,5 +272,6 @@ module.exports = {
   getConsultationsByMedecin,
   getPatientsByMedecin,
   getConsultationsByMotif,
-  getConsultationsByDate
+  getConsultationsByDate,
+  updateConsultationAdmin
 };
