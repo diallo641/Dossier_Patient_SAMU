@@ -75,18 +75,18 @@ exports.createEmploye = async (data, id_utilisateur) => {
     )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `, [
-    data.nom,
-    data.prenom,
-    data.poste,
-    data.service,
-    data.date_naissance,
-    data.telephone,
+    data.nom || null,
+    data.prenom || null,
+    data.poste || null,
+    data.service || null,
+    data.date_naissance || null,
+    data.telephone || null,
     data.type || "Employe",
-    id_utilisateur,
-    data.groupe_sanguin,
-    data.allergies,
-    data.antecedents_medicaux,
-    data.aptitudes_medicales
+    id_utilisateur || null,
+    data.groupe_sanguin || null,
+    data.allergies || null,
+    data.antecedents_medicaux || null,
+    data.aptitudes_medicales || null
   ]);
 
   return result.insertId;
@@ -106,7 +106,7 @@ exports.updateEmploye = async (id, data) => {
       service = ?,
       date_naissance = ?,
       telephone = ?,
-      type = ?,
+      type = ?,   
       groupe_sanguin = ?,
       allergies = ?,
       antecedents_medicaux = ?,

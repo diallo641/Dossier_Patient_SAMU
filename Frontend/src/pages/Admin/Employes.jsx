@@ -60,6 +60,7 @@ export default function EmployesAdmin() {
                 <tr>
                   <th className="p-3">Nom</th>
                   <th className="p-3">Prénom</th>
+                  <th className="p-3">Type</th>
                   <th className="p-3">Poste</th>
                   <th className="p-3">Service</th>
                   <th className="p-3">Téléphone</th>
@@ -77,6 +78,7 @@ export default function EmployesAdmin() {
 
                       <td className="p-3">{emp.nom}</td>
                       <td className="p-3">{emp.prenom}</td>
+                      <td className="p-3">{emp.type}</td>
                       <td className="p-3">{emp.poste}</td>
                       <td className="p-3">{emp.service}</td>
                       <td className="p-3">{emp.telephone}</td>

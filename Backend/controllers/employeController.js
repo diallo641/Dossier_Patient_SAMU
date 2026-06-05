@@ -72,6 +72,19 @@ const createEmploye = async (req, res) => {
       aptitudes_medicales
     } = req.body;
 
+    console.log("📥 BODY CREATE EMPLOYE:", req.body);
+
+    const typeMap = {
+      1: "Admin",
+      2: "Medecin",
+      3: "Employe",
+    };
+
+    const type = typeMap[Number(id_role)];
+    console.log("🔐 PASSWORD:", mot_de_passe);
+    console.log("📧 EMAIL:", email);
+    console.log("🎭 ROLE:", id_role);
+
     // HASH PASSWORD
     const hashedPassword = await bcrypt.hash(mot_de_passe, 10);
 
@@ -82,6 +95,8 @@ const createEmploye = async (req, res) => {
       id_role
     );
 
+    console.log("🧑 USER CREATED ID:", userId);
+
     // CREATE EMPLOYE
     const employeId = await employeModel.createEmploye(
       {
@@ -91,7 +106,7 @@ const createEmploye = async (req, res) => {
         service,
         date_naissance,
         telephone,
-        type: "Employe",
+        type, // ✅ FIX ICI
         groupe_sanguin,
         allergies,
         antecedents_medicaux,
@@ -99,6 +114,8 @@ const createEmploye = async (req, res) => {
       },
       userId
     );
+
+    console.log("🧑 EMPLOYE CREATED ID:", employeId);
 
     res.status(201).json({
       message: "Employé créé avec succès",
@@ -108,20 +125,31 @@ const createEmploye = async (req, res) => {
 
   } catch (error) {
 
+    console.log("❌ CREATE EMPLOYE ERROR:", error);
+
     res.status(500).json({
       error: error.message
     });
-
   }
 };
 
 // =============================
 // UPDATE EMPLOYE
 // =============================
+
 const updateEmploye = async (req, res) => {
   try {
 
-    const employe = await employeModel.getEmployeById(req.params.id);
+    const idEmploye = req.params.id;
+    const data = req.body;
+
+    console.log("\n========================");
+    console.log("📥 REQUEST UPDATE EMPLOYE");
+    console.log("========================");
+
+    console.log("📦 BODY REÇU FRONTEND:", data);
+
+    const employe = await employeModel.getEmployeById(idEmploye);
 
     if (!employe) {
       return res.status(404).json({
@@ -129,21 +157,49 @@ const updateEmploye = async (req, res) => {
       });
     }
 
+    console.log("🧑 EMPLOYÉ EN BASE AVANT UPDATE:", employe);
+
+    const idUtilisateur = employe.user_id;
+
+    const typeMap = {
+      1: "Admin",
+      2: "Medecin",
+      3: "Employe",
+    };
+
+    const dataEmploye = {
+      ...data,
+      type: typeMap[Number(data.id_role)],
+    };
+
+    console.log("🛠️ DATA EMPLOYÉ FINAL AVANT SQL:", dataEmploye);
+
     await employeModel.updateEmploye(
-      req.params.id,
-      req.body
+      idEmploye,
+      dataEmploye
     );
 
+    console.log("✅ UPDATE EMPLOYE OK");
+
+    await userModel.updateUser(
+      idUtilisateur,
+      data.email,
+      Number(data.id_role)
+    );
+
+    console.log("✅ UPDATE USER OK");
+
     res.json({
-      message: "Employé mis à jour avec succès"
+      message: "Employé et utilisateur mis à jour avec succès"
     });
 
   } catch (error) {
 
+    console.log("❌ ERREUR UPDATE EMPLOYE:", error);
+
     res.status(500).json({
       error: error.message
     });
-
   }
 };
 

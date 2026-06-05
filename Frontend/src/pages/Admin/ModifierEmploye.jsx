@@ -37,8 +37,6 @@ export default function ModifierEmploye() {
         setLoading(true);
 
         const res = await getEmployeById(id);
-
-        // ⚠️ sécurité API (selon ton backend)
         const data = res?.data || res;
 
         setForm({
@@ -47,13 +45,11 @@ export default function ModifierEmploye() {
           email: data.email || "",
           telephone: data.telephone || "",
 
-          // venant de utilisateur JOIN
           id_role: data.id_role || "",
 
           poste: data.poste || "",
           service: data.service || "",
 
-          // 🔥 IMPORTANT FORMAT INPUT DATE
           date_naissance: data.date_naissance
             ? data.date_naissance.split("T")[0]
             : "",
@@ -86,12 +82,13 @@ export default function ModifierEmploye() {
 
     try {
       setSaving(true);
+
       await updateEmploye(id, form);
 
       navigate("/employes");
 
     } catch (error) {
-      console.error(error);
+      console.error("Erreur modification :", error);
     } finally {
       setSaving(false);
     }
@@ -108,7 +105,6 @@ export default function ModifierEmploye() {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-
       <SidebarAdmin />
 
       <div className="flex-1 p-6">
@@ -122,13 +118,45 @@ export default function ModifierEmploye() {
           className="bg-white p-6 rounded-lg shadow grid grid-cols-1 md:grid-cols-2 gap-4"
         >
 
-          <input name="nom" value={form.nom} onChange={handleChange} className="border p-2 rounded" />
-          <input name="prenom" value={form.prenom} onChange={handleChange} className="border p-2 rounded" />
-          <input name="email" value={form.email} onChange={handleChange} className="border p-2 rounded" />
-          <input name="telephone" value={form.telephone} onChange={handleChange} className="border p-2 rounded" />
+          <input
+            name="nom"
+            value={form.nom}
+            onChange={handleChange}
+            placeholder="Nom"
+            className="border p-2 rounded"
+          />
+
+          <input
+            name="prenom"
+            value={form.prenom}
+            onChange={handleChange}
+            placeholder="Prénom"
+            className="border p-2 rounded"
+          />
+
+          <input
+            name="email"
+            value={form.email}
+            onChange={handleChange}
+            placeholder="Email"
+            className="border p-2 rounded"
+          />
+
+          <input
+            name="telephone"
+            value={form.telephone}
+            onChange={handleChange}
+            placeholder="Téléphone"
+            className="border p-2 rounded"
+          />
 
           {/* ROLE */}
-          <select name="id_role" value={form.id_role} onChange={handleChange} className="border p-2 rounded">
+          <select
+            name="id_role"
+            value={form.id_role}
+            onChange={handleChange}
+            className="border p-2 rounded"
+          >
             <option value="">-- Rôle --</option>
             <option value="1">Admin</option>
             <option value="2">Médecin</option>
@@ -136,7 +164,12 @@ export default function ModifierEmploye() {
           </select>
 
           {/* POSTE */}
-          <select name="poste" value={form.poste} onChange={handleChange} className="border p-2 rounded">
+          <select
+            name="poste"
+            value={form.poste}
+            onChange={handleChange}
+            className="border p-2 rounded"
+          >
             <option value="">-- Poste --</option>
             <option>Médecin du travail</option>
             <option>Infirmier(ère)</option>
@@ -146,7 +179,12 @@ export default function ModifierEmploye() {
           </select>
 
           {/* SERVICE */}
-          <select name="service" value={form.service} onChange={handleChange} className="border p-2 rounded">
+          <select
+            name="service"
+            value={form.service}
+            onChange={handleChange}
+            className="border p-2 rounded"
+          >
             <option value="">-- Service --</option>
             <option>Médecine du travail</option>
             <option>Cardiologie</option>
@@ -156,16 +194,39 @@ export default function ModifierEmploye() {
             <option>Administration</option>
           </select>
 
-          <input type="date" name="date_naissance" value={form.date_naissance} onChange={handleChange} className="border p-2 rounded" />
+          <input
+            type="date"
+            name="date_naissance"
+            value={form.date_naissance}
+            onChange={handleChange}
+            className="border p-2 rounded"
+          />
 
-          {/* SANTÉ */}
-          <select name="groupe_sanguin" value={form.groupe_sanguin} onChange={handleChange} className="border p-2 rounded">
+          {/* GROUPE SANGUIN */}
+          <select
+            name="groupe_sanguin"
+            value={form.groupe_sanguin}
+            onChange={handleChange}
+            className="border p-2 rounded"
+          >
             <option value="">-- Groupe sanguin --</option>
-            <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
-            <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+            <option>A+</option>
+            <option>A-</option>
+            <option>B+</option>
+            <option>B-</option>
+            <option>AB+</option>
+            <option>AB-</option>
+            <option>O+</option>
+            <option>O-</option>
           </select>
 
-          <select name="allergies" value={form.allergies} onChange={handleChange} className="border p-2 rounded">
+          {/* ALLERGIES */}
+          <select
+            name="allergies"
+            value={form.allergies}
+            onChange={handleChange}
+            className="border p-2 rounded"
+          >
             <option value="">-- Allergies --</option>
             <option>Aucune</option>
             <option>Pénicilline</option>
@@ -174,7 +235,13 @@ export default function ModifierEmploye() {
             <option>Poussière</option>
           </select>
 
-          <select name="antecedents_medicaux" value={form.antecedents_medicaux} onChange={handleChange} className="border p-2 rounded">
+          {/* ANTECEDENTS */}
+          <select
+            name="antecedents_medicaux"
+            value={form.antecedents_medicaux}
+            onChange={handleChange}
+            className="border p-2 rounded"
+          >
             <option value="">-- Antécédents --</option>
             <option>Aucun</option>
             <option>Diabète</option>
@@ -182,7 +249,13 @@ export default function ModifierEmploye() {
             <option>Asthme</option>
           </select>
 
-          <select name="aptitudes_medicales" value={form.aptitudes_medicales} onChange={handleChange} className="border p-2 rounded">
+          {/* APTITUDES */}
+          <select
+            name="aptitudes_medicales"
+            value={form.aptitudes_medicales}
+            onChange={handleChange}
+            className="border p-2 rounded"
+          >
             <option value="">-- Aptitude --</option>
             <option>Apte</option>
             <option>Apte avec restriction</option>
@@ -191,16 +264,25 @@ export default function ModifierEmploye() {
           </select>
 
           <div className="md:col-span-2 flex justify-end gap-3">
-            <button type="button" onClick={() => navigate("/employes")} className="px-4 py-2 bg-gray-400 text-white rounded">
+            <button
+              type="button"
+              onClick={() => navigate("/employes")}
+              className="px-4 py-2 bg-gray-400 text-white rounded"
+            >
               Annuler
             </button>
 
-            <button type="submit" disabled={saving} className="px-4 py-2 bg-green-600 text-white rounded">
+            <button
+              type="submit"
+              disabled={saving}
+              className="px-4 py-2 bg-green-600 text-white rounded"
+            >
               {saving ? "Sauvegarde..." : "Modifier"}
             </button>
           </div>
 
         </form>
+
       </div>
     </div>
   );
