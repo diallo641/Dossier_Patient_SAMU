@@ -78,7 +78,7 @@ router.get(
 router.get(
   "/:id",
   authMiddleware,
-  roleMiddleware(["Admin", "Medecin"]),
+  roleMiddleware(["Admin", "Medecin", "Employe"]),
   controller.getConsultationById
 );
 

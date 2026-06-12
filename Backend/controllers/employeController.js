@@ -26,30 +26,33 @@ const getAllEmployes = async (req, res) => {
 };
 
 // =============================
-// GET EMPLOYE BY ID
+// GET EMPLOYE BY USER ID
 // =============================
 const getEmployeById = async (req, res) => {
   try {
 
     const data = await employeModel.getEmployeById(req.params.id);
+    console.log("USER JWT:", req.user);
+    console.log("USER ID:", req.user.id);
+    console.log("ID PARAMS:", req.params.id);
 
     if (!data) {
       return res.status(404).json({
-        message: "Employé introuvable"
+        message: "Employé introuvable sur la base de données"
       });
     }
 
-    res.json(data);
+    res.json({
+      message: "OK",
+      data
+    });
 
   } catch (error) {
-
     res.status(500).json({
       error: error.message
     });
-
   }
 };
-
 // =============================
 // CREATE EMPLOYE
 // =============================
@@ -201,6 +204,62 @@ const updateEmploye = async (req, res) => {
       error: error.message
     });
   }
+};
+
+// =============================
+// UPDATE PROFIL EMPLOYE 
+// =============================
+const updateMonProfil = async (req, res) => {
+  try {
+
+    console.log("\n========================");
+    console.log("📥 UPDATE PROFIL EMPLOYE");
+    console.log("========================");
+
+    // 🔐 ID depuis le token (IMPORTANT sécurité)
+    const idUtilisateur = req.user.id;
+
+    const data = req.body;
+
+    console.log("📦 DATA REÇUE:", data);
+
+    // 🔎 récupérer employé lié à cet utilisateur
+    const employe = await employeModel.getProfilEmployeByUserId(idUtilisateur);
+
+    if (!employe) {
+      return res.status(404).json({
+        message: "Profil employé introuvable"
+      });
+    }
+
+    console.log("🧑 EMPLOYÉ TROUVÉ:", employe);
+
+    await employeModel.updateMonProfilEmploye(employe.id, {
+      nom: data.nom,
+      prenom: data.prenom,
+      date_naissance: data.date_naissance,
+      telephone: data.telephone,
+      poste: data.poste,
+      service: data.service
+    });
+
+    console.log("✅ UPDATE PROFIL EMPLOYÉ OK");
+
+    res.json({
+      message: "Profil mis à jour avec succès"
+    });
+
+  } catch (error) {
+    console.log("❌ ERREUR UPDATE PROFIL EMPLOYE:", error);
+
+    res.status(500).json({
+      error: error.message
+    });
+  }
+};
+
+module.exports = {
+  updateMonProfil
 };
 
 // =============================
@@ -384,6 +443,33 @@ const getEmployesByAptitudes = async (req, res) => {
   }
 };
 
+
+
+// =============================
+// GET PROFIL EMPLOYE CONNECTE
+// =============================
+const getProfil = async (req, res) => {
+  try {
+    const id = req.user.id;
+
+    const profil = await employeModel.getProfilEmployeByUserId(id);
+
+    if (!profil) {
+      return res.status(404).json({
+        message: "Profil employé introuvable"
+      });
+    }
+
+    res.status(200).json(profil);
+
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur serveur",
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getAllEmployes,
   getEmployeById,
@@ -397,5 +483,7 @@ module.exports = {
   getEmployesByBloodGroup,
   getEmployesByAllergies,
   getEmployesByAntecedents,
-  getEmployesByAptitudes
+  getEmployesByAptitudes,
+  getProfil,
+  updateMonProfil
 };

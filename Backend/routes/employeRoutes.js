@@ -10,7 +10,6 @@ const roleMiddleware = require("../middlewares/roleMiddleware");
 // STATS
 // =============================
 
-// TOTAL EMPLOYES
 router.get(
   "/stats/total",
   authMiddleware,
@@ -18,7 +17,6 @@ router.get(
   employeController.getTotalEmployes
 );
 
-// EMPLOYES PAR SERVICE
 router.get(
   "/stats/service",
   authMiddleware,
@@ -26,7 +24,6 @@ router.get(
   employeController.getEmployesByService
 );
 
-// EMPLOYES PAR ROLE
 router.get(
   "/stats/role",
   authMiddleware,
@@ -34,7 +31,6 @@ router.get(
   employeController.getEmployesByRole
 );
 
-// EMPLOYES PAR TYPE
 router.get(
   "/stats/type",
   authMiddleware,
@@ -42,7 +38,6 @@ router.get(
   employeController.getEmployesByType
 );
 
-// EMPLOYES PAR GROUPE SANGUIN
 router.get(
   "/stats/groupe-sanguin",
   authMiddleware,
@@ -50,7 +45,6 @@ router.get(
   employeController.getEmployesByBloodGroup
 );
 
-// EMPLOYES PAR ALLERGIES
 router.get(
   "/stats/allergies",
   authMiddleware,
@@ -58,7 +52,6 @@ router.get(
   employeController.getEmployesByAllergies
 );
 
-// EMPLOYES PAR ANTECEDENTS
 router.get(
   "/stats/antecedents",
   authMiddleware,
@@ -66,7 +59,6 @@ router.get(
   employeController.getEmployesByAntecedents
 );
 
-// EMPLOYES PAR APTITUDES
 router.get(
   "/stats/aptitudes",
   authMiddleware,
@@ -75,10 +67,27 @@ router.get(
 );
 
 // =============================
+// PROFIL EMPLOYE CONNECTE
+// =============================
+
+router.get(
+  "/profil",
+  authMiddleware,
+  roleMiddleware(["Admin", "Medecin", "Employe"]),
+  employeController.getProfil
+);
+
+router.put(
+  "/profil",
+  authMiddleware,
+  roleMiddleware(["Employe"]),
+  employeController.updateMonProfil
+);
+
+// =============================
 // EMPLOYES
 // =============================
 
-// GET ALL
 router.get(
   "/",
   authMiddleware,
@@ -86,29 +95,26 @@ router.get(
   employeController.getAllEmployes
 );
 
-// GET BY ID
 router.get(
   "/:id",
   authMiddleware,
-  roleMiddleware(["Admin", "Medecin"]),
+  roleMiddleware(["Admin", "Medecin", "Employe"]),
   employeController.getEmployeById
 );
 
-// CREATE
 router.post(
   "/",
   employeController.createEmploye
 );
 
-// UPDATE
 router.put(
   "/:id",
   authMiddleware,
-  roleMiddleware(["Admin", "Medecin"]),
+  roleMiddleware(["Admin", "Medecin", "Employe"]),
   employeController.updateEmploye
 );
 
-// DELETE
+
 router.delete(
   "/:id",
   authMiddleware,

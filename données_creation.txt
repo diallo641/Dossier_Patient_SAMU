@@ -1,0 +1,46 @@
+{
+  "nom": "Diallo",
+  "prenom": "Amadou",
+  "poste": "Administrateur Systeme",
+  "service": "Informatique",
+  "date_naissance": "1985-06-15",
+  "telephone": "770000001",
+  "email": "admin@test.com",
+  "mot_de_passe": "admin123",
+  "id_role": 1,
+  "groupe_sanguin": "O+",
+  "allergies": "Aucune",
+  "antecedents_medicaux": "Aucun",
+  "aptitudes_medicales": "Apte"
+}
+
+{
+  "nom": "Bah",
+  "prenom": "Fatou",
+  "poste": "Medecin du Travail",
+  "service": "Medical",
+  "date_naissance": "1988-03-20",
+  "telephone": "770000002",
+  "email": "medecin@test.com",
+  "mot_de_passe": "medecin123",
+  "id_role": 2,
+  "groupe_sanguin": "A+",
+  "allergies": "Penicilline",
+  "antecedents_medicaux": "Aucun",
+  "aptitudes_medicales": "Apte"
+}
+{
+  "nom": "Sow",
+  "prenom": "Moussa",
+  "poste": "Comptable",
+  "service": "Finance",
+  "date_naissance": "1995-11-10",
+  "telephone": "770000003",
+  "email": "employe@test.com",
+  "mot_de_passe": "employe123",
+  "id_role": 3,
+  "groupe_sanguin": "B+",
+  "allergies": "Aucune",
+  "antecedents_medicaux": "Asthme leger",
+  "aptitudes_medicales": "Apte"
+}

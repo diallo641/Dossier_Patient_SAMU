@@ -8,7 +8,7 @@ const db = require("./config/db");
 // =============================
 async function testDB() {
   try {
-    const [rows] = await db.query("SELECT 1 + 1 AS result");
+    const [rows] = await db.query("SELECT 1 + 3 AS result");
     console.log("✅ Base de données connectée :", rows[0].result);
   } catch (err) {
     console.log("❌ Erreur connexion DB :", err);

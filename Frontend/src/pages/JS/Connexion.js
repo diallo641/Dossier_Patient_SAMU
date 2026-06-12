@@ -58,7 +58,7 @@ export function useConnexion() {
         navigation("/dashboard-admin");
       } 
       else {
-        navigation("/dashboard");
+        navigation("/employe");
       }
 
     } catch (err) {

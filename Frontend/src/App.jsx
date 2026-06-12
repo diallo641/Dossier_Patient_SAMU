@@ -13,6 +13,13 @@ import ModifierEmploye from "./pages/Admin/ModifierEmploye";
 import ModifierConsultation from "./pages/Admin/ModifierConsultation";
 import AjouterConsultation from "./pages/Consultations/AjouterConsultation";
 import Inscription from "./pages/Autres/Inscription";
+import DashboardEmploye from "./pages/EmployesSimple/DashboardEmploye";
+import MesConsultations from "./pages/EmployesSimple/MesConsultations";
+import DetailConsultation from "./pages/EmployesSimple/DetailConsultation";
+import DossierMedical from "./pages/EmployesSimple/DossierMedical";
+import MesDocuments from "./pages/EmployesSimple/MesDocuments";
+import ProfilEmploye from "./pages/EmployesSimple/ProfilEmploye";
+import ModifierProfil from "./pages/EmployesSimple/ModifierProfil";
 import { AuthProvider } from "./context/AuthContext";
 
 export default function App() {
@@ -38,6 +45,13 @@ export default function App() {
           <Route path="/modifier-employe/:id" element={<ModifierEmploye />} />
           <Route path="/modifier-consultation/:id" element={<ModifierConsultation />} />
           <Route path="/ajouter-consultation" element={<AjouterConsultation />} />
+          <Route path="/employe" element={<DashboardEmploye />} />
+          <Route path="/employe/consultations" element={<MesConsultations />} />
+          <Route path="/employe/consultations/:id" element={<DetailConsultation />}/>
+          <Route path="/employe/dossier" element={<DossierMedical />} />
+          <Route path="/employe/documents" element={<MesDocuments />} />
+          <Route path="/employe/profil" element={<ProfilEmploye />} />
+          <Route path="/employe/profil/modifier" element={<ModifierProfil />} />
           {/* fallback (optionnel mais pro) */}
           <Route path="*" element={<Navigate to="/" />} />
 

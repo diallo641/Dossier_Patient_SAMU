@@ -51,7 +51,16 @@ exports.getAllConsultations = async () => {
 // GET BY ID
 exports.getConsultationById = async (id) => {
   const [rows] = await db.query(
-    `SELECT * FROM consultation WHERE id = ?`,
+    `
+    SELECT
+      c.*,
+      m.nom AS medecin_nom,
+      m.prenom AS medecin_prenom
+    FROM consultation c
+    LEFT JOIN employe m
+      ON c.id_medecin = m.id
+    WHERE c.id = ?
+    `,
     [id]
   );
 
@@ -62,7 +71,17 @@ exports.getConsultationById = async (id) => {
 // GET BY EMPLOYE
 exports.getConsultationsByEmploye = async (id_employe) => {
   const [rows] = await db.query(
-    `SELECT * FROM consultation WHERE id_employe = ?`,
+    `
+    SELECT
+      c.*,
+      m.nom AS medecin_nom,
+      m.prenom AS medecin_prenom
+    FROM consultation c
+    LEFT JOIN employe m
+      ON c.id_medecin = m.id
+    WHERE c.id_employe = ?
+    ORDER BY c.date_consultation DESC
+    `,
     [id_employe]
   );
 

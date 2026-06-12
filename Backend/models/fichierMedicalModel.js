@@ -60,21 +60,20 @@ const getAllFichiersMedicaux = async () => {
 // ==============================
 const getFichierMedicalById = async (id) => {
   const sql = `
-  SELECT 
-    fm.*,
-    e.nom AS uploaded_by_nom,
-    e.prenom AS uploaded_by_prenom
-  FROM fichier_medical fm
-  LEFT JOIN employe e 
-    ON fm.uploaded_by = e.id_utilisateur
-  ORDER BY fm.date_upload DESC
-`;
+    SELECT
+      fm.*,
+      e.nom AS uploaded_by_nom,
+      e.prenom AS uploaded_by_prenom
+    FROM fichier_medical fm
+    LEFT JOIN employe e
+      ON fm.uploaded_by = e.id_utilisateur
+    WHERE fm.id = ?
+  `;
 
   const [rows] = await db.query(sql, [id]);
 
   return rows[0];
 };
-
 // ==============================
 // GET FILES BY CONSULTATION
 // ==============================

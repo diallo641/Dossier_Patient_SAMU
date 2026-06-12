@@ -57,12 +57,7 @@ export default function SidebarAdmin() {
           Consultations
         </Link>
 
-        <Link to="/fichiers-medicaux"
-          className="flex items-center gap-3 px-4 py-2 rounded hover:bg-blue-600"
-        >
-          <FileText size={18} />
-          Fichiers médicaux
-        </Link>
+        
       </nav>
 
       {/* FOOTER / LOGOUT */}

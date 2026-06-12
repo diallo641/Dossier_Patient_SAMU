@@ -129,6 +129,31 @@ exports.updateEmploye = async (id, data) => {
 };
 
 // =============================
+// UPDATE PROFIL EMPLOYE 
+// =============================
+exports.updateMonProfilEmploye = async (id, data) => {
+  await db.query(`
+    UPDATE employe
+    SET 
+      nom = ?,
+      prenom = ?,
+      date_naissance = ?,
+      telephone = ?,
+      poste = ?,
+      service = ?
+    WHERE id = ?
+  `, [
+    data.nom,
+    data.prenom,
+    data.date_naissance,
+    data.telephone,
+    data.poste,
+    data.service,
+    id
+  ]);
+};
+
+// =============================
 // DELETE EMPLOYE
 // =============================
 exports.deleteEmploye = async (id) => {
@@ -272,4 +297,45 @@ exports.getEmployesByAptitudes = async () => {
   `);
 
   return rows;
+};
+
+// =============================
+// GET PROFIL EMPLOYE BY USER ID
+// =============================
+exports.getProfilEmployeByUserId = async (id_utilisateur) => {
+  console.log("🔥 MODEL CALLED WITH USER ID:", id_utilisateur);
+
+  const [rows] = await db.query(`
+    SELECT 
+      e.id,
+      e.nom,
+      e.prenom,
+      e.poste,
+      e.service,
+      e.date_naissance,
+      e.telephone,
+      e.type,
+      e.groupe_sanguin,
+      e.allergies,
+      e.antecedents_medicaux,
+      e.aptitudes_medicales,
+      e.created_at,
+      e.updated_at,
+      u.id AS user_id,
+      u.email,
+      u.mot_de_passe,
+      u.id_role
+    FROM employe e
+    INNER JOIN utilisateur u 
+      ON e.id_utilisateur = u.id
+    WHERE e.id_utilisateur = ?
+  `, [id_utilisateur]);
+
+  console.log("🔥 SQL RESULT:", rows);
+
+  if (!rows || rows.length === 0) {
+    return null;
+  }
+
+  return rows[0];
 };

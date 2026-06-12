@@ -42,7 +42,12 @@ const getUserById = async (req, res) => {
       });
     }
 
-    res.json(user);
+    res.json({
+  message: "Utilisateur trouvé",
+  data: user,
+});
+
+    
 
   } catch (error) {
     res.status(500).json({
