@@ -143,6 +143,27 @@ exports.getTotalConsultations = async () => {
 // ==========================================
 // CONSULTATIONS DU MEDECIN
 // ==========================================
+exports.getPatientsByMedecin = async (id_medecin) => {
+  const [rows] = await db.query(`
+    SELECT DISTINCT 
+      e.id,
+      e.nom,
+      e.prenom,
+      e.poste,
+      e.service,
+      e.telephone,
+      e.type
+    FROM consultation c
+    JOIN employe e ON e.id = c.id_employe
+    WHERE c.id_medecin = ?
+  `, [id_medecin]);
+
+  return rows;
+};
+
+// =============================
+// CONSULTATIONS DU MEDECIN
+// =============================
 exports.getConsultationsByMedecin = async (id_medecin) => {
   const [rows] = await db.query(`
     SELECT 
@@ -152,8 +173,8 @@ exports.getConsultationsByMedecin = async (id_medecin) => {
       c.diagnostic,
       c.traitement,
       c.observation,
-      e.nom,
-      e.prenom
+      e.nom AS employe_nom,
+      e.prenom AS employe_prenom
     FROM consultation c
     INNER JOIN employe e ON c.id_employe = e.id
     WHERE c.id_medecin = ?
@@ -163,19 +184,6 @@ exports.getConsultationsByMedecin = async (id_medecin) => {
   return rows;
 };
 
-// ==========================================
-// NOMBRE DE PATIENTS CONSULTÉS
-// ==========================================
-exports.getPatientsByMedecin = async (id_medecin) => {
-  const [rows] = await db.query(`
-    SELECT 
-      COUNT(DISTINCT c.id_employe) AS total_patients
-    FROM consultation c
-    WHERE c.id_medecin = ?
-  `, [id_medecin]);
-
-  return rows[0];
-};
 
 // ==========================================
 // CONSULTATIONS PAR MOTIF
@@ -206,6 +214,52 @@ exports.getConsultationsByDate = async (id_medecin) => {
     WHERE c.id_medecin = ?
     GROUP BY c.date_consultation
     ORDER BY c.date_consultation DESC
+  `, [id_medecin]);
+
+  return rows;
+};
+
+// ==========================================
+// TOTAL PATIENTS UNIQUES DU MEDECIN
+// ==========================================
+exports.getTotalPatientsByMedecin = async (id_medecin) => {
+  const [rows] = await db.query(`
+    SELECT COUNT(DISTINCT id_employe) AS total
+    FROM consultation
+    WHERE id_medecin = ?
+  `, [id_medecin]);
+
+  return rows[0];
+};
+
+exports.getConsultationsToday = async (id_medecin) => {
+  const [rows] = await db.query(`
+    SELECT *
+FROM consultation
+WHERE id_medecin = ?
+AND DATE(date_consultation) = DATE(NOW())
+  `, [id_medecin]);
+
+  return rows;
+};
+
+exports.getConsultationsWeek = async (id_medecin) => {
+  const [rows] = await db.query(`
+    SELECT *
+FROM consultation
+WHERE id_medecin = ?
+AND DATE(date_consultation) >= DATE_SUB(DATE(NOW()), INTERVAL 7 DAY)
+  `, [id_medecin]);
+
+  return rows;
+};
+
+exports.getConsultationsMonth = async (id_medecin) => {
+  const [rows] = await db.query(`
+    SELECT *
+FROM consultation
+WHERE id_medecin = ?
+AND DATE(date_consultation) >= DATE_SUB(DATE(NOW()), INTERVAL 1 MONTH)
   `, [id_medecin]);
 
   return rows;

@@ -4,7 +4,7 @@ const router = express.Router();
 const controller = require("../controllers/fichierMedicalController");
 
 const authMiddleware = require("../middlewares/authMiddleware");
-
+const roleMiddleware = require("../middlewares/roleMiddleware");
 const upload = require("../middlewares/uploadMiddleware");
 
 // ==============================
@@ -13,7 +13,7 @@ const upload = require("../middlewares/uploadMiddleware");
 router.post(
   "/",
   authMiddleware,
-  upload.single("fichier"),
+  upload.array("fichiers"),
   controller.createFichierMedical
 );
 
@@ -23,6 +23,7 @@ router.post(
 router.get(
   "/",
   authMiddleware,
+  roleMiddleware(["Admin", "Medecin"]),
   controller.getAllFichiersMedicaux
 );
 
@@ -32,6 +33,7 @@ router.get(
 router.get(
   "/:id",
   authMiddleware,
+  roleMiddleware(["Admin", "Medecin"]),
   controller.getFichierMedicalById
 );
 

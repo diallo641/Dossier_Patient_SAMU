@@ -52,7 +52,7 @@ export function useConnexion() {
       // REDIRECTION
       // =============================
       if (role === "Medecin") {
-        navigation("/");
+        navigation("/medecin");
       } 
       else if (role === "Admin") {
         navigation("/dashboard-admin");

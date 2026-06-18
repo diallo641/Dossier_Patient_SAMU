@@ -11,6 +11,17 @@ const roleMiddleware = require("../middlewares/roleMiddleware");
 // ⚠️ TOUJOURS AVANT /:id
 // =============================
 
+router.get(
+  "/stats/patients/total",
+  authMiddleware,
+  roleMiddleware(["Medecin"]),
+  controller.getTotalPatientsByMedecin
+);
+router.get("/stats/today", authMiddleware, roleMiddleware(["Medecin"]), controller.getConsultationsToday);
+
+router.get("/stats/week", authMiddleware, roleMiddleware(["Medecin"]), controller.getConsultationsWeek);
+
+router.get("/stats/month", authMiddleware, roleMiddleware(["Medecin"]), controller.getConsultationsMonth);
 // TOTAL CONSULTATIONS
 router.get(
   "/stats/total",
@@ -21,23 +32,18 @@ router.get(
 
 // CONSULTATIONS DU MEDECIN
 router.get(
-  "/stats/medecin/:id",
+  "/stats/medecin",
   authMiddleware,
-  roleMiddleware(["Admin", "Medecin"]),
+  roleMiddleware(["Medecin"]),
   controller.getConsultationsByMedecin
 );
 
 // PATIENTS CONSULTÉS PAR LE MEDECIN
-router.get(
-  "/stats/patients/:id",
-  authMiddleware,
-  roleMiddleware(["Admin", "Medecin"]),
-  controller.getPatientsByMedecin
-);
+router.get("/stats/patients", authMiddleware, roleMiddleware(["Medecin"]), controller.getPatientsByMedecin);
 
 // CONSULTATIONS PAR MOTIF
 router.get(
-  "/stats/motifs/:id",
+  "/stats/motifs",
   authMiddleware,
   roleMiddleware(["Admin", "Medecin"]),
   controller.getConsultationsByMotif
@@ -45,7 +51,7 @@ router.get(
 
 // CONSULTATIONS PAR DATE
 router.get(
-  "/stats/dates/:id",
+  "/stats/dates",
   authMiddleware,
   roleMiddleware(["Admin", "Medecin"]),
   controller.getConsultationsByDate

@@ -9,19 +9,18 @@ const createConsultation = async (req, res) => {
 
     res.status(201).json({
       message: "Consultation créée",
-      id
+      id,
     });
-
   } catch (error) {
     res.status(500).json({
       message: "Erreur création consultation",
-      error: error.message
+      error: error.message,
     });
   }
 };
 
 // =============================
-// GET ALL
+// GET ALL CONSULTATIONS
 // =============================
 const getAllConsultations = async (req, res) => {
   try {
@@ -30,19 +29,18 @@ const getAllConsultations = async (req, res) => {
     res.json({
       message: "Liste des consultations",
       total: data.length,
-      data
+      data,
     });
-
   } catch (error) {
     res.status(500).json({
       message: "Erreur récupération consultations",
-      error: error.message
+      error: error.message,
     });
   }
 };
 
 // =============================
-// GET BY ID
+// GET CONSULTATION BY ID
 // =============================
 const getConsultationById = async (req, res) => {
   try {
@@ -50,61 +48,62 @@ const getConsultationById = async (req, res) => {
 
     if (!data) {
       return res.status(404).json({
-        message: "Consultation introuvable"
+        message: "Consultation introuvable",
       });
     }
 
     res.json(data);
-
   } catch (error) {
     res.status(500).json({
       message: "Erreur récupération consultation",
-      error: error.message
+      error: error.message,
     });
   }
 };
 
 // =============================
-// GET BY EMPLOYE
+// GET CONSULTATIONS BY EMPLOYE
 // =============================
 const getByEmploye = async (req, res) => {
   try {
-    const data = await consultationModel.getConsultationsByEmploye(req.params.id);
+    const data = await consultationModel.getConsultationsByEmploye(
+      req.params.id
+    );
 
     res.json({
       message: "Consultations de l'employé",
       total: data.length,
-      data
+      data,
     });
-
   } catch (error) {
     res.status(500).json({
       message: "Erreur",
-      error: error.message
+      error: error.message,
     });
   }
 };
 
 // =============================
-// UPDATE
+// UPDATE CONSULTATION (MEDECIN)
 // =============================
 const updateConsultation = async (req, res) => {
   try {
     await consultationModel.updateConsultation(req.params.id, req.body);
 
     res.json({
-      message: "Consultation mise à jour"
+      message: "Consultation mise à jour",
     });
-
   } catch (error) {
     res.status(500).json({
       message: "Erreur update",
-      error: error.message
+      error: error.message,
     });
   }
 };
 
-
+// =============================
+// UPDATE CONSULTATION ADMIN
+// =============================
 const updateConsultationAdmin = async (req, res) => {
   try {
     await consultationModel.updateConsultationAdmin(
@@ -113,37 +112,33 @@ const updateConsultationAdmin = async (req, res) => {
     );
 
     res.json({
-      message: "Consultation modifiée par admin"
+      message: "Consultation modifiée par admin",
     });
-
   } catch (error) {
     res.status(500).json({
       message: "Erreur update admin",
-      error: error.message
+      error: error.message,
     });
   }
 };
 
 // =============================
-// DELETE
+// DELETE CONSULTATION
 // =============================
 const deleteConsultation = async (req, res) => {
   try {
     await consultationModel.deleteConsultation(req.params.id);
 
     res.json({
-      message: "Consultation supprimée"
+      message: "Consultation supprimée",
     });
-
   } catch (error) {
     res.status(500).json({
       message: "Erreur suppression",
-      error: error.message
+      error: error.message,
     });
   }
 };
-
-
 
 // =============================
 // TOTAL CONSULTATIONS
@@ -154,23 +149,23 @@ const getTotalConsultations = async (req, res) => {
 
     res.json({
       message: "Total consultations",
-      data: stats
+      data: stats,
     });
-
   } catch (error) {
     res.status(500).json({
       message: "Erreur statistiques",
-      error: error.message
+      error: error.message,
     });
   }
 };
 
 // =============================
-// CONSULTATIONS DU MEDECIN
+// CONSULTATIONS DU MEDECIN (IMPORTANT)
 // =============================
 const getConsultationsByMedecin = async (req, res) => {
   try {
-    const id_medecin = req.params.id; // ✅ FIX ICI
+    // 🔥 IMPORTANT: vient du token (pas params)
+    const id_medecin = req.user.id;
 
     const consultations =
       await consultationModel.getConsultationsByMedecin(id_medecin);
@@ -178,13 +173,12 @@ const getConsultationsByMedecin = async (req, res) => {
     res.json({
       message: "Consultations du médecin",
       total: consultations.length,
-      data: consultations
+      data: consultations,
     });
-
   } catch (error) {
     res.status(500).json({
       message: "Erreur consultations médecin",
-      error: error.message
+      error: error.message,
     });
   }
 };
@@ -194,22 +188,23 @@ const getConsultationsByMedecin = async (req, res) => {
 // =============================
 const getPatientsByMedecin = async (req, res) => {
   try {
-    const id_medecin = req.params.id; // ✅ FIX ICI
+    console.log("USER =", req.user);
+    console.log("ID =", req.user?.id);
 
-    const data =
-      await consultationModel.getPatientsByMedecin(id_medecin);
+    const data = await consultationModel.getPatientsByMedecin(req.user.id);
 
-    res.json({
-      message: "Patients consultés",
-      data
-    });
+    res.json({ data });
+    console.log("🔥 DATA:", data); // IMPORTANT
 
   } catch (error) {
-    res.status(500).json({
-      message: "Erreur patients",
-      error: error.message
-    });
-  }
+  console.log("🔥 FULL ERROR:", error); // IMPORTANT
+
+  return res.status(500).json({
+    message: "Erreur",
+    error: error.message,
+    stack: error.stack
+  });
+}
 };
 
 // =============================
@@ -217,21 +212,13 @@ const getPatientsByMedecin = async (req, res) => {
 // =============================
 const getConsultationsByMotif = async (req, res) => {
   try {
-    const id_medecin = req.params.id; // ✅ FIX ICI
+    const id_medecin = req.user.id;
 
-    const data =
-      await consultationModel.getConsultationsByMotif(id_medecin);
+    const data = await consultationModel.getConsultationsByMotif(id_medecin);
 
-    res.json({
-      message: "Consultations par motif",
-      data
-    });
-
+    res.json({ data });
   } catch (error) {
-    res.status(500).json({
-      message: "Erreur statistiques motifs",
-      error: error.message
-    });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -240,38 +227,103 @@ const getConsultationsByMotif = async (req, res) => {
 // =============================
 const getConsultationsByDate = async (req, res) => {
   try {
-    const id_medecin = req.params.id; // ✅ FIX ICI
+    const id_medecin = req.user.id;
 
-    const data =
-      await consultationModel.getConsultationsByDate(id_medecin);
+    const data = await consultationModel.getConsultationsByDate(id_medecin);
+
+    res.json({ data });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+const getConsultationsToday = async (req, res) => {
+  try {
+    const id_medecin = req.user.id;
+
+    const data = await consultationModel.getConsultationsToday(id_medecin);
 
     res.json({
-      message: "Consultations par date",
-      data
+      total: data.length,
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur stats today",
+      error: error.message,
+    });
+  }
+};
+const getConsultationsWeek = async (req, res) => {
+  try {
+    const id_medecin = req.user.id;
+
+    const data = await consultationModel.getConsultationsWeek(id_medecin);
+
+    res.json({
+      total: data.length,
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur stats week",
+      error: error.message,
+    });
+  }
+};
+const getConsultationsMonth = async (req, res) => {
+  try {
+    const id_medecin = req.user.id;
+
+    const data = await consultationModel.getConsultationsMonth(id_medecin);
+
+    res.json({
+      total: data.length,
+      data,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Erreur stats month",
+      error: error.message,
+    });
+  }
+};
+
+const getTotalPatientsByMedecin = async (req, res) => {
+  try {
+    const id_medecin = req.user.id;
+
+    const data = await consultationModel.getTotalPatientsByMedecin(id_medecin);
+
+    res.json({
+      total: data.total
     });
 
   } catch (error) {
     res.status(500).json({
-      message: "Erreur statistiques dates",
+      message: "Erreur total patients",
       error: error.message
     });
   }
 };
 
-
-
-
+// =============================
+// EXPORT
+// =============================
 module.exports = {
   createConsultation,
   getAllConsultations,
   getConsultationById,
   getByEmploye,
   updateConsultation,
+  updateConsultationAdmin,
   deleteConsultation,
   getTotalConsultations,
   getConsultationsByMedecin,
   getPatientsByMedecin,
   getConsultationsByMotif,
   getConsultationsByDate,
-  updateConsultationAdmin
+  getConsultationsToday,
+  getConsultationsWeek,
+  getConsultationsMonth,
+  getTotalPatientsByMedecin
 };

@@ -20,6 +20,16 @@ import DossierMedical from "./pages/EmployesSimple/DossierMedical";
 import MesDocuments from "./pages/EmployesSimple/MesDocuments";
 import ProfilEmploye from "./pages/EmployesSimple/ProfilEmploye";
 import ModifierProfil from "./pages/EmployesSimple/ModifierProfil";
+import DashboardMedecin from "./pages/Medecin/DashboardMedecin";
+import ListeEmployesMedecin from "./pages/Medecin/ListeEmployesMedecin";
+import AjouterConsultationMedecin from "./pages/Medecin/AjouterConsultationMedecin";
+import DetailConsultationMedecin from "./pages/Medecin/DetailConsultationMedecin";
+import DetailUneConsultation from "./pages/Medecin/DetailUneConsultation";
+import ModifierConsultationMedecin from "./pages/Medecin/ModifierConsultationMedecin";
+import ConsultationsMedecin from "./pages/Medecin/ConsultationsMedecin";
+import ListeDossierMedicaux from "./pages/Medecin/ListeDossierMedicaux";
+import DetailDossierMedical from "./pages/Medecin/DetailDossierMedical";
+import ActivitesMedecin from "./pages/Medecin/ActivitesMedecin";
 import { AuthProvider } from "./context/AuthContext";
 
 export default function App() {
@@ -52,6 +62,17 @@ export default function App() {
           <Route path="/employe/documents" element={<MesDocuments />} />
           <Route path="/employe/profil" element={<ProfilEmploye />} />
           <Route path="/employe/profil/modifier" element={<ModifierProfil />} />
+          <Route path="/medecin" element={<DashboardMedecin />} />
+          <Route path="/mes-patients" element={<ListeEmployesMedecin />} />
+          <Route path="/medecin/consultation/nouvelle/:idPatient" element={<AjouterConsultationMedecin />}/>
+          <Route path="/medecin/consultations/:id" element={<DetailConsultationMedecin />}/>
+          <Route path="/medecin/patient/:id" element={<DetailConsultationMedecin />} />
+          <Route path="/medecin/consultation/:id" element={<DetailUneConsultation />} />
+          <Route path="/medecin/consultation/modifier/:id" element={<ModifierConsultationMedecin />} />
+          <Route path="/consultations-medecin" element={<ConsultationsMedecin />} />
+          <Route path="/dossiers-medicaux" element={<ListeDossierMedicaux />} />
+          <Route path="/dossier-medical/:id" element={<DetailDossierMedical />} />
+          <Route path="/activites-medecin" element={<ActivitesMedecin />} />
           {/* fallback (optionnel mais pro) */}
           <Route path="*" element={<Navigate to="/" />} />
 

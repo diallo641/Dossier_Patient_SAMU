@@ -44,3 +44,24 @@
   "antecedents_medicaux": "Asthme leger",
   "aptitudes_medicales": "Apte"
 }
+
+
+exports.getConsultationsByMedecin = async (id_medecin) => {
+  const [rows] = await db.query(`
+    SELECT 
+      c.id,
+      c.date_consultation,
+      c.motif,
+      c.diagnostic,
+      c.traitement,
+      c.observation,
+      e.nom,
+      e.prenom
+    FROM consultation c
+    INNER JOIN employe e ON c.id_employe = e.id
+    WHERE c.id_medecin = ?
+    ORDER BY c.date_consultation DESC
+  `, [id_medecin]);
+
+  return rows;
+};

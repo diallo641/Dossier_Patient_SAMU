@@ -80,7 +80,7 @@ router.get(
 router.put(
   "/profil",
   authMiddleware,
-  roleMiddleware(["Employe"]),
+  roleMiddleware(["Employe", "Medecin", "Admin"]),
   employeController.updateMonProfil
 );
 
@@ -104,6 +104,8 @@ router.get(
 
 router.post(
   "/",
+  authMiddleware,
+  roleMiddleware(["Admin", "Medecin"]),
   employeController.createEmploye
 );
 

@@ -23,66 +23,58 @@ const allowedMimeTypes = [
 // ==============================
 const createFichierMedical = async (req, res) => {
   try {
-    // Vérification fichier
-    console.log("HEADERS:", req.headers);
     console.log("BODY:", req.body);
-    console.log("FILE:", req.file);
-    if (!req.file) {
+    console.log("FILES:", req.files);
+
+    if (!req.files || req.files.length === 0) {
       return res.status(400).json({
         message: "Aucun fichier uploadé",
-      });
-    }
-
-    // Validation type fichier
-    if (!allowedMimeTypes.includes(req.file.mimetype)) {
-      // Supprimer fichier invalide
-      fs.unlinkSync(req.file.path);
-
-      return res.status(400).json({
-        message: "Type de fichier non autorisé",
       });
     }
 
     const {
       categorie,
       description,
-      uploaded_by,
       id_consultation,
     } = req.body;
 
-    // Données à enregistrer
-    const data = {
-      nom_fichier: req.file.originalname,
+    const uploadedFiles = [];
 
-      chemin: req.file.path,
+    for (const file of req.files) {
 
-      type_fichier: req.file.mimetype,
+      // validation type
+      if (!allowedMimeTypes.includes(file.mimetype)) {
+        fs.unlinkSync(file.path);
+        continue;
+      }
 
-      taille_fichier: req.file.size,
+      const data = {
+        nom_fichier: file.originalname,
+        chemin: file.path,
+        type_fichier: file.mimetype,
+        taille_fichier: file.size,
+        categorie,
+        description,
+        extension: path.extname(file.originalname),
+        uploaded_by: req.user.id,
+        id_consultation,
+      };
 
-      categorie,
+      const result =
+        await fichierMedicalModel.createFichierMedical(data);
 
-      description,
-
-      extension: path.extname(req.file.originalname),
-
-      uploaded_by,
-
-      id_consultation,
-    };
-
-    const result = await fichierMedicalModel.createFichierMedical(
-      data
-    );
+      uploadedFiles.push(result);
+    }
+     console.log("req.files =", req.files);
+     console.log("length =", req.files?.length);
 
     res.status(201).json({
-      message: "Fichier médical uploadé avec succès",
-      data: result,
+      message: "Fichiers uploadés avec succès",
+      data: uploadedFiles,
     });
 
   } catch (error) {
     console.error(error);
-
     res.status(500).json({
       message: "Erreur serveur",
       error: error.message,
