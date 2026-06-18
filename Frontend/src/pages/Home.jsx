@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import BoutonDeconnexion from "../composants/BoutonDeconnexion";
+
 
 export default function Home() {
   return (
@@ -31,7 +31,7 @@ export default function Home() {
               Inscription
             </Link>
 
-            <BoutonDeconnexion />
+           
           </div>
 
         </div>
@@ -88,7 +88,7 @@ export default function Home() {
             </Link>
 
             <Link
-              to="/register"
+              to="/inscription"
               className="border-2 border-blue-700 text-blue-700 px-6 py-3 rounded-xl hover:bg-blue-50 transition"
             >
               Créer un compte
