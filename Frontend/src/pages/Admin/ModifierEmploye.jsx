@@ -44,16 +44,12 @@ export default function ModifierEmploye() {
           prenom: data.prenom || "",
           email: data.email || "",
           telephone: data.telephone || "",
-
           id_role: data.id_role || "",
-
           poste: data.poste || "",
           service: data.service || "",
-
           date_naissance: data.date_naissance
             ? data.date_naissance.split("T")[0]
             : "",
-
           groupe_sanguin: data.groupe_sanguin || "",
           allergies: data.allergies || "",
           antecedents_medicaux: data.antecedents_medicaux || "",
@@ -104,10 +100,13 @@ export default function ModifierEmploye() {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100">
+
+      {/* SIDEBAR FIXE */}
       <SidebarAdmin />
 
-      <div className="flex-1 p-6">
+      {/* CONTENT décalé */}
+      <div className="ml-0 md:ml-64 p-6">
 
         <h1 className="text-2xl font-bold mb-6">
           Modifier employé

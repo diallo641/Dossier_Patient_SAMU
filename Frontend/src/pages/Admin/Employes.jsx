@@ -36,7 +36,7 @@ export default function EmployesAdmin() {
       <SidebarAdmin />
 
       {/* CONTENT */}
-      <div className="flex-1 p-6">
+      <div className="flex-1 ml-0 md:ml-64 p-6">
 
         {/* HEADER */}
         <div className="flex justify-between items-center mb-6">
@@ -86,7 +86,6 @@ export default function EmployesAdmin() {
                       {/* ACTIONS */}
                       <td className="p-3 flex justify-center gap-4">
 
-                        {/* MODIFIER */}
                         <Link
                           to={`/modifier-employe/${id}`}
                           className="text-blue-600 hover:text-blue-800 transition"
@@ -94,7 +93,6 @@ export default function EmployesAdmin() {
                           <Pencil size={18} />
                         </Link>
 
-                        {/* SUPPRIMER */}
                         <button
                           onClick={() => handleDelete(id)}
                           className="text-red-600 hover:text-red-800 transition"

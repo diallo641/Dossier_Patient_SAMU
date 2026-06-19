@@ -20,7 +20,6 @@ export default function DashboardAdmin() {
 
   const [serviceData, setServiceData] = useState([]);
   const [roleData, setRoleData] = useState([]);
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -62,11 +61,12 @@ export default function DashboardAdmin() {
   }, []);
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100">
 
       <SidebarAdmin />
 
-      <div className="flex-1 p-6">
+      {/* IMPORTANT: marge pour sidebar fixed */}
+      <div className="ml-0 md:ml-64 p-6">
 
         <h1 className="text-2xl font-bold mb-6 text-gray-800">
           Dashboard Administrateur

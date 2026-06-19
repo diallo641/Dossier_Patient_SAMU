@@ -24,9 +24,6 @@ export default function AjouterConsultation() {
     id_medecin: "",
   });
 
-  // =====================
-  // LOAD EMPLOYES
-  // =====================
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,9 +37,6 @@ export default function AjouterConsultation() {
     fetchData();
   }, []);
 
-  // =====================
-  // CHANGE INPUT
-  // =====================
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -50,9 +44,6 @@ export default function AjouterConsultation() {
     });
   };
 
-  // =====================
-  // SUBMIT
-  // =====================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -74,11 +65,13 @@ export default function AjouterConsultation() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100">
 
+      {/* SIDEBAR FIXE */}
       <SidebarAdmin />
 
-      <div className="flex-1 p-6 max-w-3xl">
+      {/* CONTENT décalé */}
+      <div className="ml-0 md:ml-64 p-6 max-w-3xl">
 
         <h1 className="text-2xl font-bold mb-6">
           Ajouter une consultation

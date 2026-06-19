@@ -22,17 +22,11 @@ export default function ModifierConsultation() {
     observation: "",
   });
 
-  // =====================
-  // FORMAT DATE
-  // =====================
   const formatDate = (date) => {
     if (!date) return "";
     return date.split("T")[0];
   };
 
-  // =====================
-  // LOAD DATA
-  // =====================
   useEffect(() => {
     getConsultationById(id)
       .then((res) => {
@@ -48,9 +42,6 @@ export default function ModifierConsultation() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // =====================
-  // INPUT CHANGE
-  // =====================
   const handleChange = (e) => {
     setForm({
       ...form,
@@ -58,9 +49,6 @@ export default function ModifierConsultation() {
     });
   };
 
-  // =====================
-  // SUBMIT ADMIN SAFE
-  // =====================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -82,11 +70,13 @@ export default function ModifierConsultation() {
   if (loading) return <p className="p-6">Chargement...</p>;
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100">
 
+      {/* SIDEBAR FIXE */}
       <SidebarAdmin />
 
-      <div className="flex-1 p-6 max-w-3xl">
+      {/* CONTENT décalé */}
+      <div className="ml-0 md:ml-64 p-6 max-w-3xl">
 
         <h1 className="text-2xl font-bold mb-6">
           Modifier consultation

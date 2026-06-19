@@ -40,9 +40,6 @@ export default function Consultations() {
     setConsultations((prev) => prev.filter((c) => c.id !== id));
   };
 
-  // =========================
-  // FORMAT DATE (SANS HEURE)
-  // =========================
   const formatDate = (date) => {
     if (!date) return "";
 
@@ -54,13 +51,13 @@ export default function Consultations() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100">
 
-      {/* SIDEBAR */}
+      {/* SIDEBAR FIXE */}
       <SidebarAdmin />
 
-      {/* CONTENT */}
-      <div className="flex-1 p-6">
+      {/* CONTENT avec décalage */}
+      <div className="ml-0 md:ml-64 p-6">
 
         {/* HEADER */}
         <div className="flex justify-between items-center mb-4">
@@ -85,7 +82,6 @@ export default function Consultations() {
           ) : (
             <table className="w-full text-sm">
 
-              {/* HEADER */}
               <thead className="bg-gray-100 text-left text-gray-700">
                 <tr>
                   <th className="p-3">Date</th>
@@ -96,7 +92,6 @@ export default function Consultations() {
                 </tr>
               </thead>
 
-              {/* BODY */}
               <tbody>
                 {consultations.map((c) => {
                   const id = c.id;
@@ -104,7 +99,6 @@ export default function Consultations() {
                   return (
                     <tr key={id} className="border-t hover:bg-gray-50">
 
-                      {/* DATE FORMATÉE */}
                       <td className="p-3">
                         {formatDate(c.date_consultation)}
                       </td>
@@ -119,10 +113,8 @@ export default function Consultations() {
 
                       <td className="p-3">{c.motif}</td>
 
-                      {/* ACTIONS */}
                       <td className="p-3 flex justify-center gap-4">
 
-                        {/* MODIFIER */}
                         <Link
                           to={`/modifier-consultation/${id}`}
                           className="text-blue-600 hover:text-blue-800"
@@ -130,7 +122,6 @@ export default function Consultations() {
                           <Pencil size={18} />
                         </Link>
 
-                        {/* SUPPRIMER */}
                         <button
                           onClick={() => handleDelete(id)}
                           className="text-red-600 hover:text-red-800"
