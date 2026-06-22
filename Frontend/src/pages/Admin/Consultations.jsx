@@ -65,7 +65,7 @@ export default function Consultations() {
             Gestion des consultations
           </h1>
 
-          <BoutonAjouterConsultation />
+          
         </div>
 
         {/* TOTAL CARD */}
