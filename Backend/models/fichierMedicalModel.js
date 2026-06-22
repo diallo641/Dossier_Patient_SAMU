@@ -1,8 +1,7 @@
 const db = require("../config/db");
 
-// ==============================
-// CREATE FILE
-// ==============================
+
+// ajouter un nouveau fichier
 const createFichierMedical = async (data) => {
   const sql = `
     INSERT INTO fichier_medical (
@@ -35,9 +34,8 @@ const createFichierMedical = async (data) => {
   return result;
 };
 
-// ==============================
-// GET ALL FILES
-// ==============================
+
+// tous les fichiers
 const getAllFichiersMedicaux = async () => {
   const sql = `
     SELECT 
@@ -54,9 +52,8 @@ const getAllFichiersMedicaux = async () => {
   return rows;
 };
 
-// ==============================
-// GET FILE BY ID
-// ==============================
+
+// un seul fichier
 const getFichierMedicalById = async (id) => {
   const sql = `
     SELECT
@@ -73,9 +70,8 @@ const getFichierMedicalById = async (id) => {
   return rows[0];
 };
 
-// ==============================
-// GET FILES BY CONSULTATION
-// ==============================
+
+// les fichiers d'une consultation
 const getFichiersByConsultation = async (id_consultation) => {
   const sql = `
     SELECT 
@@ -93,9 +89,8 @@ const getFichiersByConsultation = async (id_consultation) => {
   return rows;
 };
 
-// ==============================
-// UPDATE FILE
-// ==============================
+
+//modifier le fichier (pas trop important)
 const updateFichierMedical = async (id, data) => {
   const sql = `
     UPDATE fichier_medical
@@ -125,9 +120,8 @@ const updateFichierMedical = async (id, data) => {
   return result;
 };
 
-// ==============================
-// DELETE FILE
-// ==============================
+
+// supprimer un fichier
 const deleteFichierMedical = async (id) => {
   const sql = `
     DELETE FROM fichier_medical

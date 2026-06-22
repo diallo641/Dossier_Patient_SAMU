@@ -3,28 +3,21 @@ const fs = require("fs");
 
 const fichierMedicalModel = require("../models/fichierMedicalModel");
 
-// ==============================
-// TYPES AUTORISÉS
-// ==============================
+
+// types de fichiers autorisés
 const allowedMimeTypes = [
   "application/pdf",
-
   "image/jpeg",
   "image/jpg",
   "image/png",
-
   "application/msword",
-
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ];
 
-// ==============================
-// CREATE FILE
-// ==============================
+
+// ajouter un fichier médical
 const createFichierMedical = async (req, res) => {
   try {
-    console.log("BODY:", req.body);
-    console.log("FILES:", req.files);
 
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({
@@ -83,9 +76,8 @@ const createFichierMedical = async (req, res) => {
   }
 };
 
-// ==============================
-// GET ALL FILES
-// ==============================
+
+// tous les fichiers médicaux
 const getAllFichiersMedicaux = async (req, res) => {
   try {
     const fichiers =
@@ -111,9 +103,8 @@ const getAllFichiersMedicaux = async (req, res) => {
   }
 };
 
-// ==============================
-// GET FILE BY ID
-// ==============================
+
+// avoir un fichier médical par ID
 const getFichierMedicalById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -141,9 +132,8 @@ const getFichierMedicalById = async (req, res) => {
   }
 };
 
-// ==============================
-// GET FILES BY CONSULTATION
-// ==============================
+
+// avoir les fichiers d'une consultation
 const getFichiersByConsultation = async (req, res) => {
   try {
     const { id_consultation } = req.params;
@@ -167,9 +157,8 @@ const getFichiersByConsultation = async (req, res) => {
   }
 };
 
-// ==============================
-// UPDATE FILE
-// ==============================
+
+// modifier un fichier médical
 const updateFichierMedical = async (req, res) => {
   try {
     const { id } = req.params;
@@ -215,9 +204,8 @@ const updateFichierMedical = async (req, res) => {
   }
 };
 
-// ==============================
-// DELETE FILE
-// ==============================
+
+// supprimer un fichier médical
 const deleteFichierMedical = async (req, res) => {
   try {
     const { id } = req.params;
@@ -237,7 +225,7 @@ const deleteFichierMedical = async (req, res) => {
       fs.unlinkSync(fichier.chemin);
     }
 
-    // Supprimer DB
+    // Supprimer en base de données
     await fichierMedicalModel.deleteFichierMedical(id);
 
     res.status(200).json({

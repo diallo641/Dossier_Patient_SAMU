@@ -3,13 +3,13 @@ const roleMiddleware = (roles) => {
 
     if (!req.user || !req.user.role) {
       return res.status(403).json({
-        message: "Accès interdit (pas de rôle)",
+        message: "Accès interdit - Vous n'avez pas de rôle défini",
       });
     }
 
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({
-        message: "Accès interdit",
+        message: "Accès interdit - Votre rôle ne vous permet pas d'accéder à cette ressource",
       });
     }
 

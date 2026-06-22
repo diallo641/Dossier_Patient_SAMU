@@ -1,12 +1,12 @@
 const db = require("../config/db");
 
-//GET ALL
+//tous le sroles
 exports.getAllRoles = async () => {
   const [rows] = await db.query("SELECT * FROM role");
   return rows;
 };
 
-//GET BY ID
+//un seul role
 exports.getRoleById = async (id) => {
   const [rows] = await db.query(
     "SELECT * FROM role WHERE id = ?",
@@ -15,7 +15,7 @@ exports.getRoleById = async (id) => {
   return rows[0];
 };
 
-//CREATE
+//ajouter un role
 exports.createRole = async (nom_role) => {
   const [result] = await db.query(
     "INSERT INTO role (nom_role) VALUES (?)",
@@ -24,7 +24,7 @@ exports.createRole = async (nom_role) => {
   return result.insertId;
 };
 
-//UPDATE
+//modifier un role
 exports.updateRole = async (id, nom_role) => {
   await db.query(
     "UPDATE role SET nom_role = ? WHERE id = ?",
@@ -32,7 +32,7 @@ exports.updateRole = async (id, nom_role) => {
   );
 };
 
-//DELETE
+//supprimer un role 
 exports.deleteRole = async (id) => {
   await db.query("DELETE FROM role WHERE id = ?", [id]);
 };

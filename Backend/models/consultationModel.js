@@ -1,7 +1,7 @@
 const db = require("../config/db");
 
 
-// CREATE CONSULTATION
+// creer une consultation
 exports.createConsultation = async (data) => {
   const {
     date_consultation,
@@ -32,7 +32,7 @@ exports.createConsultation = async (data) => {
 };
 
 
-// GET ALL CONSULTATIONS
+// avoir toutes les consultations
 exports.getAllConsultations = async () => {
   const [rows] = await db.query(`
     SELECT c.*, 
@@ -48,7 +48,7 @@ exports.getAllConsultations = async () => {
 };
 
 
-// GET BY ID
+// avoir un seule consultation par son id
 exports.getConsultationById = async (id) => {
   const [rows] = await db.query(
     `
@@ -68,7 +68,7 @@ exports.getConsultationById = async (id) => {
 };
 
 
-// GET BY EMPLOYE
+// avoir les consultations par employe
 exports.getConsultationsByEmploye = async (id_employe) => {
   const [rows] = await db.query(
     `
@@ -89,7 +89,7 @@ exports.getConsultationsByEmploye = async (id_employe) => {
 };
 
 
-// UPDATE
+// modifier une consultation en general
 exports.updateConsultation = async (id, data) => {
   const {
     motif,
@@ -106,6 +106,7 @@ exports.updateConsultation = async (id, data) => {
   );
 };
 
+// modifier une consultation par l'admin (date et motif)
 exports.updateConsultationAdmin = async (id, data) => {
   const { date_consultation, motif } = data;
 
@@ -118,7 +119,7 @@ exports.updateConsultationAdmin = async (id, data) => {
 };
 
 
-// DELETE
+//supprimer une consultation
 exports.deleteConsultation = async (id) => {
   await db.query(
     `DELETE FROM consultation WHERE id = ?`,
@@ -127,10 +128,7 @@ exports.deleteConsultation = async (id) => {
 };
 
 
-
-// ==========================================
-// TOTAL CONSULTATIONS
-// ==========================================
+// total des consultations
 exports.getTotalConsultations = async () => {
   const [rows] = await db.query(`
     SELECT COUNT(*) AS total
@@ -140,9 +138,8 @@ exports.getTotalConsultations = async () => {
   return rows[0];
 };
 
-// ==========================================
-// CONSULTATIONS DU MEDECIN
-// ==========================================
+
+// avoir les patients uniques du medecin
 exports.getPatientsByMedecin = async (id_medecin) => {
   const [rows] = await db.query(`
     SELECT DISTINCT 
@@ -161,9 +158,8 @@ exports.getPatientsByMedecin = async (id_medecin) => {
   return rows;
 };
 
-// =============================
-// CONSULTATIONS DU MEDECIN
-// =============================
+
+// consultations d'un medecin avec les details de l'employe
 exports.getConsultationsByMedecin = async (id_medecin) => {
   const [rows] = await db.query(`
     SELECT 
@@ -185,9 +181,8 @@ exports.getConsultationsByMedecin = async (id_medecin) => {
 };
 
 
-// ==========================================
-// CONSULTATIONS PAR MOTIF
-// ==========================================
+
+// consultations par motif
 exports.getConsultationsByMotif = async (id_medecin) => {
   const [rows] = await db.query(`
     SELECT 
@@ -202,9 +197,8 @@ exports.getConsultationsByMotif = async (id_medecin) => {
   return rows;
 };
 
-// ==========================================
-// CONSULTATIONS PAR DATE
-// ==========================================
+
+// consultations par date
 exports.getConsultationsByDate = async (id_medecin) => {
   const [rows] = await db.query(`
     SELECT 
@@ -219,9 +213,8 @@ exports.getConsultationsByDate = async (id_medecin) => {
   return rows;
 };
 
-// ==========================================
-// TOTAL PATIENTS UNIQUES DU MEDECIN
-// ==========================================
+
+// total patients uniques du medecins
 exports.getTotalPatientsByMedecin = async (id_medecin) => {
   const [rows] = await db.query(`
     SELECT COUNT(DISTINCT id_employe) AS total
@@ -232,6 +225,7 @@ exports.getTotalPatientsByMedecin = async (id_medecin) => {
   return rows[0];
 };
 
+//avoir le nombre de ocnsultationn en journée
 exports.getConsultationsToday = async (id_medecin) => {
   const [rows] = await db.query(`
     SELECT *
@@ -243,6 +237,7 @@ AND DATE(date_consultation) = DATE(NOW())
   return rows;
 };
 
+//avoir le nombre de consultation dans la semaine
 exports.getConsultationsWeek = async (id_medecin) => {
   const [rows] = await db.query(`
     SELECT *
@@ -254,6 +249,7 @@ AND DATE(date_consultation) >= DATE_SUB(DATE(NOW()), INTERVAL 7 DAY)
   return rows;
 };
 
+//avoir le nombre de consultation dans le mois
 exports.getConsultationsMonth = async (id_medecin) => {
   const [rows] = await db.query(`
     SELECT *

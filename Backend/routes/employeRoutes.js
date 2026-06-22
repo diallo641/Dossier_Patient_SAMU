@@ -6,9 +6,7 @@ const employeController = require("../controllers/employeController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const roleMiddleware = require("../middlewares/roleMiddleware");
 
-// =============================
-// STATS
-// =============================
+
 
 router.get(
   "/stats/total",
@@ -66,10 +64,8 @@ router.get(
   employeController.getEmployesByAptitudes
 );
 
-// =============================
-// PROFIL EMPLOYE CONNECTE
-// =============================
 
+// PROFIL EMPLOYE CONNECTE
 router.get(
   "/profil",
   authMiddleware,
@@ -84,10 +80,8 @@ router.put(
   employeController.updateMonProfil
 );
 
-// =============================
-// EMPLOYES
-// =============================
 
+// EMPLOYES
 router.get(
   "/",
   authMiddleware,

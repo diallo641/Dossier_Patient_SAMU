@@ -6,7 +6,7 @@ const authMiddleware = (req, res, next) => {
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
-        message: "Token manquant",
+        message: "Token manquant! Token obligatoire pour accéder à cette ressource.",
       });
     }
 

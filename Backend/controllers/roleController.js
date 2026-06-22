@@ -1,7 +1,7 @@
 const roleModel = require("../models/roleModel");
 
 
-//TOUS LES ROLES
+//tous les roles
 const getAllRoles = async (req, res) => {
   try {
     const roles = await roleModel.getAllRoles();
@@ -25,7 +25,7 @@ const getAllRoles = async (req, res) => {
 };
 
 
-//ROLE PAR ID
+//un role par son id
 const getRoleById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -45,7 +45,7 @@ const getRoleById = async (req, res) => {
   }
 };
 
-//AJOUT ROLE
+//creer un role
 const createRole = async (req, res) => {
   try {
     const { nom_role } = req.body;
@@ -65,7 +65,7 @@ const createRole = async (req, res) => {
 };
 
 
-//MODIFIER ROLE
+//Mmodifier un role
 const updateRole = async (req, res) => {
   try {
     const { id } = req.params;
@@ -83,7 +83,7 @@ const updateRole = async (req, res) => {
 };
 
 
-//SUPPRIMER ROLE
+//supprimer un role
 const deleteRole = async (req, res) => {
   try {
     const { id } = req.params;
@@ -99,7 +99,7 @@ const deleteRole = async (req, res) => {
   }
 };
 
-// EXPORT
+// exportr les fonctions du controller pour les utiliser dans les routes
 module.exports = {
   getAllRoles,
   getRoleById,

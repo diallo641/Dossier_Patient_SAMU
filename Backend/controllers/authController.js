@@ -8,9 +8,8 @@ const sendEmail = require("../utils/sendEmail");
 
 
 
-// =============================
-// REGISTER
-// =============================
+
+// Inscription
 const register = async (req, res) => {
   try {
     const { email, mot_de_passe, id_role } = req.body;
@@ -50,9 +49,8 @@ const register = async (req, res) => {
   }
 };
 
-// =============================
-// LOGIN
-// =============================
+
+// connexion
 const login = async (req, res) => {
   try {
     const { email, mot_de_passe } = req.body;
@@ -113,19 +111,19 @@ const forgotPassword = async (req, res) => {
       });
     }
 
-    // 🔐 token sécurisé
+    //token sécurisé
     const token = crypto.randomBytes(32).toString("hex");
 
-    // ⏰ expiration 15 min
+    //expiration 15 min
     const expires = new Date(Date.now() + 15 * 60 * 1000);
 
-    // 💾 sauvegarde en DB
+    //sauvegarde en base de données
     await userModel.saveResetToken(email, token, expires);
 
-    // 🔗 lien reset
+    //lien pour reinitialiser le mot de passe
     const resetLink = `http://localhost:5173/reset-password?token=${token}`;
 
-    // 📩 envoi email
+    //envoi email
     await sendEmail(
       email,
       "Réinitialisation de mot de passe",

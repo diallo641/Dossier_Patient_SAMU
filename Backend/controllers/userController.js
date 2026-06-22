@@ -1,8 +1,7 @@
 const userModel = require("../models/userModel");
 
-// =============================
-// GET ALL USERS
-// =============================
+
+// tous les utilisateurs
 const getAllUsers = async (req, res) => {
   try {
     const users = await userModel.getAllUsers();
@@ -27,9 +26,8 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-// =============================
-// GET USER BY ID
-// =============================
+
+// un utilisateur par son id
 const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -57,9 +55,8 @@ const getUserById = async (req, res) => {
   }
 };
 
-// =============================
-// CREATE USER
-// =============================
+
+// ajouter un utilisateur
 const createUser = async (req, res) => {
   try {
     const { email, mot_de_passe, id_role } = req.body;
@@ -93,9 +90,8 @@ const createUser = async (req, res) => {
   }
 };
 
-// =============================
-// UPDATE USER
-// =============================
+
+// modifier un utilisateur
 const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -129,9 +125,8 @@ const updateUser = async (req, res) => {
   }
 };
 
-// =============================
-// DELETE USER
-// =============================
+
+// supprimer un utilisateur
 const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -150,9 +145,8 @@ const deleteUser = async (req, res) => {
   }
 };
 
-// =============================
-// STATISTIQUES
-// =============================
+
+// statistiques utilisateurs
 const getUserStats = async (req, res) => {
   try {
     const stats = await userModel.getUserStats();

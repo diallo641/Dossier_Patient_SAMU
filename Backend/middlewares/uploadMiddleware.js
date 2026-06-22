@@ -1,9 +1,8 @@
 const multer = require("multer");
 const path = require("path");
 
-// ==============================
-// STORAGE CONFIG
-// ==============================
+
+// configuration du stockage des fichiers téléchargés
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/");
@@ -17,9 +16,8 @@ const storage = multer.diskStorage({
   },
 });
 
-// ==============================
-// MULTER CONFIG
-// ==============================
+
+// configuration de multer pour gérer les téléchargements de fichiers
 const upload = multer({
   storage,
 });

@@ -2,9 +2,8 @@ const employeModel = require("../models/employeModel");
 const userModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 
-// =============================
-// GET ALL EMPLOYES
-// =============================
+
+// tous les employes
 const getAllEmployes = async (req, res) => {
   try {
 
@@ -25,9 +24,8 @@ const getAllEmployes = async (req, res) => {
   }
 };
 
-// =============================
-// GET EMPLOYE BY USER ID
-// =============================
+
+// un employe par son id
 const getEmployeById = async (req, res) => {
   try {
 
@@ -53,9 +51,9 @@ const getEmployeById = async (req, res) => {
     });
   }
 };
-// =============================
-// CREATE EMPLOYE
-// =============================
+
+
+// creer un employe
 const createEmploye = async (req, res) => {
   try {
 
@@ -136,21 +134,14 @@ const createEmploye = async (req, res) => {
   }
 };
 
-// =============================
-// UPDATE EMPLOYE
-// =============================
 
+// modifier un employe
 const updateEmploye = async (req, res) => {
   try {
 
     const idEmploye = req.params.id;
     const data = req.body;
-
-    console.log("\n========================");
-    console.log("📥 REQUEST UPDATE EMPLOYE");
-    console.log("========================");
-
-    console.log("📦 BODY REÇU FRONTEND:", data);
+    console.log("BODY REÇU FRONTEND:", data);
 
     const employe = await employeModel.getEmployeById(idEmploye);
 
@@ -159,9 +150,6 @@ const updateEmploye = async (req, res) => {
         message: "Employé introuvable"
       });
     }
-
-    console.log("🧑 EMPLOYÉ EN BASE AVANT UPDATE:", employe);
-
     const idUtilisateur = employe.user_id;
 
     const typeMap = {
@@ -174,56 +162,39 @@ const updateEmploye = async (req, res) => {
       ...data,
       type: typeMap[Number(data.id_role)],
     };
-
-    console.log("🛠️ DATA EMPLOYÉ FINAL AVANT SQL:", dataEmploye);
-
     await employeModel.updateEmploye(
       idEmploye,
       dataEmploye
     );
 
-    console.log("✅ UPDATE EMPLOYE OK");
-
+   
+    //Modifier aussi l'utilisateur lié
     await userModel.updateUser(
       idUtilisateur,
       data.email,
       Number(data.id_role)
     );
 
-    console.log("✅ UPDATE USER OK");
+   
 
     res.json({
       message: "Employé et utilisateur mis à jour avec succès"
     });
 
   } catch (error) {
-
-    console.log("❌ ERREUR UPDATE EMPLOYE:", error);
-
     res.status(500).json({
       error: error.message
     });
   }
 };
 
-// =============================
-// UPDATE PROFIL EMPLOYE 
-// =============================
+
+//modifier son propre profil
 const updateMonProfil = async (req, res) => {
   try {
-
-    console.log("\n========================");
-    console.log("📥 UPDATE PROFIL EMPLOYE");
-    console.log("========================");
-
-    // 🔐 ID depuis le token (IMPORTANT sécurité)
     const idUtilisateur = req.user.id;
 
     const data = req.body;
-
-    console.log("📦 DATA REÇUE:", data);
-
-    // 🔎 récupérer employé lié à cet utilisateur
     const employe = await employeModel.getProfilEmployeByUserId(idUtilisateur);
 
     if (!employe) {
@@ -232,7 +203,7 @@ const updateMonProfil = async (req, res) => {
       });
     }
 
-    console.log("🧑 EMPLOYÉ TROUVÉ:", employe);
+    //console.log("🧑 EMPLOYÉ TROUVÉ:", employe);
 
     await employeModel.updateMonProfilEmploye(employe.id, {
       nom: data.nom,
@@ -243,14 +214,14 @@ const updateMonProfil = async (req, res) => {
       service: data.service
     });
 
-    console.log("✅ UPDATE PROFIL EMPLOYÉ OK");
+    //console.log("✅ UPDATE PROFIL EMPLOYÉ OK");
 
     res.json({
       message: "Profil mis à jour avec succès"
     });
 
   } catch (error) {
-    console.log("❌ ERREUR UPDATE PROFIL EMPLOYE:", error);
+    //console.log("❌ ERREUR UPDATE PROFIL EMPLOYE:", error);
 
     res.status(500).json({
       error: error.message
@@ -258,13 +229,7 @@ const updateMonProfil = async (req, res) => {
   }
 };
 
-module.exports = {
-  updateMonProfil
-};
-
-// =============================
-// DELETE EMPLOYE
-// =============================
+// supprimer un employe
 const deleteEmploye = async (req, res) => {
   try {
 
@@ -291,9 +256,8 @@ const deleteEmploye = async (req, res) => {
   }
 };
 
-// =============================
+
 // TOTAL EMPLOYES
-// =============================
 const getTotalEmployes = async (req, res) => {
   try {
 
@@ -310,9 +274,8 @@ const getTotalEmployes = async (req, res) => {
   }
 };
 
-// =============================
-// EMPLOYES PAR SERVICE
-// =============================
+
+// repartition des employes par service
 const getEmployesByService = async (req, res) => {
   try {
 
@@ -329,9 +292,8 @@ const getEmployesByService = async (req, res) => {
   }
 };
 
-// =============================
-// EMPLOYES PAR ROLE
-// =============================
+
+// repartition des employes par role
 const getEmployesByRole = async (req, res) => {
   try {
 
@@ -348,9 +310,8 @@ const getEmployesByRole = async (req, res) => {
   }
 };
 
-// =============================
-// EMPLOYES PAR TYPE
-// =============================
+
+// repartition des employes par type (medecin, admin, employe)
 const getEmployesByType = async (req, res) => {
   try {
 
@@ -367,9 +328,8 @@ const getEmployesByType = async (req, res) => {
   }
 };
 
-// =============================
-// EMPLOYES PAR GROUPE SANGUIN
-// =============================
+
+// repartition des employes par groupe sanguin
 const getEmployesByBloodGroup = async (req, res) => {
   try {
 
@@ -386,9 +346,8 @@ const getEmployesByBloodGroup = async (req, res) => {
   }
 };
 
-// =============================
-// EMPLOYES PAR ALLERGIES
-// =============================
+
+// repartition des employes par allégies
 const getEmployesByAllergies = async (req, res) => {
   try {
 
@@ -405,9 +364,8 @@ const getEmployesByAllergies = async (req, res) => {
   }
 };
 
-// =============================
-// EMPLOYES PAR ANTECEDENTS
-// =============================
+
+// repartition des employes par antecedents
 const getEmployesByAntecedents = async (req, res) => {
   try {
 
@@ -424,9 +382,8 @@ const getEmployesByAntecedents = async (req, res) => {
   }
 };
 
-// =============================
-// EMPLOYES PAR APTITUDES
-// =============================
+
+// repartition des employes par aptitudes
 const getEmployesByAptitudes = async (req, res) => {
   try {
 
@@ -445,9 +402,8 @@ const getEmployesByAptitudes = async (req, res) => {
 
 
 
-// =============================
-// GET PROFIL EMPLOYE CONNECTE
-// =============================
+
+// profil de l'employé connecté
 const getProfil = async (req, res) => {
   try {
     const id = req.user.id;

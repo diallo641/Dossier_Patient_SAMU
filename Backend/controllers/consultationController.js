@@ -1,8 +1,7 @@
 const consultationModel = require("../models/consultationModel");
 
-// =============================
-// CREATE CONSULTATION
-// =============================
+
+// creer une nouvelle consultation
 const createConsultation = async (req, res) => {
   try {
     const id = await consultationModel.createConsultation(req.body);
@@ -19,9 +18,8 @@ const createConsultation = async (req, res) => {
   }
 };
 
-// =============================
-// GET ALL CONSULTATIONS
-// =============================
+
+// toutes les consultations
 const getAllConsultations = async (req, res) => {
   try {
     const data = await consultationModel.getAllConsultations();
@@ -39,9 +37,8 @@ const getAllConsultations = async (req, res) => {
   }
 };
 
-// =============================
-// GET CONSULTATION BY ID
-// =============================
+
+// une consultation par son ID
 const getConsultationById = async (req, res) => {
   try {
     const data = await consultationModel.getConsultationById(req.params.id);
@@ -61,9 +58,7 @@ const getConsultationById = async (req, res) => {
   }
 };
 
-// =============================
 // GET CONSULTATIONS BY EMPLOYE
-// =============================
 const getByEmploye = async (req, res) => {
   try {
     const data = await consultationModel.getConsultationsByEmploye(
@@ -83,9 +78,8 @@ const getByEmploye = async (req, res) => {
   }
 };
 
-// =============================
-// UPDATE CONSULTATION (MEDECIN)
-// =============================
+
+// Umodifier une consultation (par le médecin)
 const updateConsultation = async (req, res) => {
   try {
     await consultationModel.updateConsultation(req.params.id, req.body);
@@ -101,9 +95,8 @@ const updateConsultation = async (req, res) => {
   }
 };
 
-// =============================
-// UPDATE CONSULTATION ADMIN
-// =============================
+
+// modifier une consultation (par l'admin)
 const updateConsultationAdmin = async (req, res) => {
   try {
     await consultationModel.updateConsultationAdmin(
@@ -122,9 +115,8 @@ const updateConsultationAdmin = async (req, res) => {
   }
 };
 
-// =============================
-// DELETE CONSULTATION
-// =============================
+
+// supprimer une consultation
 const deleteConsultation = async (req, res) => {
   try {
     await consultationModel.deleteConsultation(req.params.id);
@@ -140,9 +132,8 @@ const deleteConsultation = async (req, res) => {
   }
 };
 
-// =============================
+
 // TOTAL CONSULTATIONS
-// =============================
 const getTotalConsultations = async (req, res) => {
   try {
     const stats = await consultationModel.getTotalConsultations();
@@ -159,12 +150,10 @@ const getTotalConsultations = async (req, res) => {
   }
 };
 
-// =============================
-// CONSULTATIONS DU MEDECIN (IMPORTANT)
-// =============================
+
+// les CONSULTATIONS DU MEDECIN 
 const getConsultationsByMedecin = async (req, res) => {
   try {
-    // 🔥 IMPORTANT: vient du token (pas params)
     const id_medecin = req.user.id;
 
     const consultations =
@@ -183,9 +172,8 @@ const getConsultationsByMedecin = async (req, res) => {
   }
 };
 
-// =============================
-// PATIENTS DU MEDECIN
-// =============================
+
+// les patients du médecin (sans doublons)
 const getPatientsByMedecin = async (req, res) => {
   try {
     console.log("USER =", req.user);
@@ -194,10 +182,10 @@ const getPatientsByMedecin = async (req, res) => {
     const data = await consultationModel.getPatientsByMedecin(req.user.id);
 
     res.json({ data });
-    console.log("🔥 DATA:", data); // IMPORTANT
+    console.log("DATA:", data); 
 
   } catch (error) {
-  console.log("🔥 FULL ERROR:", error); // IMPORTANT
+  console.log("FULL ERROR:", error); 
 
   return res.status(500).json({
     message: "Erreur",
@@ -207,9 +195,8 @@ const getPatientsByMedecin = async (req, res) => {
 }
 };
 
-// =============================
+
 // CONSULTATIONS PAR MOTIF
-// =============================
 const getConsultationsByMotif = async (req, res) => {
   try {
     const id_medecin = req.user.id;
@@ -222,9 +209,8 @@ const getConsultationsByMotif = async (req, res) => {
   }
 };
 
-// =============================
+
 // CONSULTATIONS PAR DATE
-// =============================
 const getConsultationsByDate = async (req, res) => {
   try {
     const id_medecin = req.user.id;
@@ -236,6 +222,8 @@ const getConsultationsByDate = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+//CONSULTATIONS AUJOURD'HUI
 const getConsultationsToday = async (req, res) => {
   try {
     const id_medecin = req.user.id;
@@ -253,6 +241,8 @@ const getConsultationsToday = async (req, res) => {
     });
   }
 };
+
+// CONSULTATIONS CETTE SEMAINE
 const getConsultationsWeek = async (req, res) => {
   try {
     const id_medecin = req.user.id;
@@ -270,6 +260,8 @@ const getConsultationsWeek = async (req, res) => {
     });
   }
 };
+
+// CONSULTATIONS CE MOIS
 const getConsultationsMonth = async (req, res) => {
   try {
     const id_medecin = req.user.id;
@@ -288,6 +280,7 @@ const getConsultationsMonth = async (req, res) => {
   }
 };
 
+// TOTAL PATIENTS DU MEDECIN (sans doublons)
 const getTotalPatientsByMedecin = async (req, res) => {
   try {
     const id_medecin = req.user.id;
@@ -306,9 +299,8 @@ const getTotalPatientsByMedecin = async (req, res) => {
   }
 };
 
-// =============================
+
 // EXPORT
-// =============================
 module.exports = {
   createConsultation,
   getAllConsultations,

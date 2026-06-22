@@ -1,8 +1,7 @@
 const db = require("../config/db");
 
-// =============================
-// USERS
-// =============================
+
+//tous les utilisateurs
 exports.getAllUsers = async () => {
   const [rows] = await db.query(`
     SELECT u.id, u.email, r.nom_role, u.created_at, u.updated_at
@@ -12,6 +11,7 @@ exports.getAllUsers = async () => {
   return rows;
 };
 
+//avoir un utilisateur par son id
 exports.getUserById = async (id) => {
   const [rows] = await db.query(`
     SELECT u.id, u.email, r.nom_role, u.created_at, u.updated_at
@@ -23,9 +23,8 @@ exports.getUserById = async (id) => {
   return rows[0];
 };
 
-// =============================
-// AUTH
-// =============================
+
+//email
 exports.getUserByEmail = async (email) => {
   const [rows] = await db.query(`
     SELECT u.id, u.email, u.mot_de_passe, r.nom_role
@@ -37,9 +36,8 @@ exports.getUserByEmail = async (email) => {
   return rows[0];
 };
 
-// =============================
-// CHECK EMAIL
-// =============================
+
+//verifier l'existence de l'adresse mail
 exports.emailExists = async (email) => {
   const [rows] = await db.query(
     "SELECT id FROM utilisateur WHERE email = ?",
@@ -48,6 +46,7 @@ exports.emailExists = async (email) => {
   return rows.length > 0;
 };
 
+//Verifier le mail à l'exception de l'utilisateur actuel
 exports.emailExistsExceptUser = async (email, id) => {
   const [rows] = await db.query(
     "SELECT id FROM utilisateur WHERE email = ? AND id != ?",
@@ -56,9 +55,8 @@ exports.emailExistsExceptUser = async (email, id) => {
   return rows.length > 0;
 };
 
-// =============================
-// CREATE / UPDATE / DELETE
-// =============================
+
+//ajouter un utilisateur
 exports.createUser = async (email, password, role) => {
   const [result] = await db.query(
     "INSERT INTO utilisateur (email, mot_de_passe, id_role) VALUES (?, ?, ?)",
@@ -67,6 +65,7 @@ exports.createUser = async (email, password, role) => {
   return result.insertId;
 };
 
+//modifier un utilisateur
 exports.updateUser = async (id, email, role) => {
   await db.query(
     "UPDATE utilisateur SET email = ?, id_role = ? WHERE id = ?",
@@ -74,13 +73,14 @@ exports.updateUser = async (id, email, role) => {
   );
 };
 
+
+//supprimer un utilisateur
 exports.deleteUser = async (id) => {
   await db.query("DELETE FROM utilisateur WHERE id = ?", [id]);
 };
 
-// =============================
-// PASSWORD
-// =============================
+
+// modifier son mot de passe
 exports.updatePassword = async (id, password) => {
   await db.query(
     "UPDATE utilisateur SET mot_de_passe = ? WHERE id = ?",
@@ -88,9 +88,8 @@ exports.updatePassword = async (id, password) => {
   );
 };
 
-// =============================
-// STATS
-// =============================
+
+//statistiques
 exports.getUserStats = async () => {
   const [total] = await db.query(
     "SELECT COUNT(*) AS total FROM utilisateur"
@@ -110,9 +109,8 @@ exports.getUserStats = async () => {
 };
 
 
-// =============================
-// 🔐 SAVE RESET TOKEN
-// =============================
+
+//token d ereinitialisation
 exports.saveResetToken = async (email, token, expires) => {
   await db.query(
     `UPDATE utilisateur 
@@ -122,9 +120,8 @@ exports.saveResetToken = async (email, token, expires) => {
   );
 };
 
-// =============================
-// 🔎 GET USER BY RESET TOKEN
-// =============================
+
+//utilisateur du token
 exports.getUserByResetToken = async (token) => {
   const [rows] = await db.query(
     `SELECT * FROM utilisateur 
@@ -134,9 +131,8 @@ exports.getUserByResetToken = async (token) => {
   return rows[0];
 };
 
-// =============================
-// 🔐 CLEAR RESET TOKEN
-// =============================
+
+//effacer le token
 exports.clearResetToken = async (id) => {
   await db.query(
     `UPDATE utilisateur 

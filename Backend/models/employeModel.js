@@ -1,8 +1,7 @@
 const db = require("../config/db");
 
-// =============================
-// GET ALL EMPLOYES
-// =============================
+
+// tous les employes
 exports.getAllEmployes = async () => {
 
   const [rows] = await db.query(`
@@ -33,9 +32,8 @@ exports.getAllEmployes = async () => {
   return rows;
 };
 
-// =============================
-// GET EMPLOYE BY ID
-// =============================
+
+// un seul employe
 exports.getEmployeById = async (id) => {
 
   const [rows] = await db.query(`
@@ -53,11 +51,9 @@ exports.getEmployeById = async (id) => {
   return rows[0];
 };
 
-// =============================
-// CREATE EMPLOYE
-// =============================
-exports.createEmploye = async (data, id_utilisateur) => {
 
+// ajouter un employe
+exports.createEmploye = async (data, id_utilisateur) => {
   const [result] = await db.query(`
     INSERT INTO employe (
       nom,
@@ -92,9 +88,8 @@ exports.createEmploye = async (data, id_utilisateur) => {
   return result.insertId;
 };
 
-// =============================
-// UPDATE EMPLOYE
-// =============================
+
+// modifier les informations d'un employe
 exports.updateEmploye = async (id, data) => {
 
   await db.query(`
@@ -128,9 +123,8 @@ exports.updateEmploye = async (id, data) => {
   ]);
 };
 
-// =============================
-// UPDATE PROFIL EMPLOYE 
-// =============================
+
+// modifier le profil d'un employe
 exports.updateMonProfilEmploye = async (id, data) => {
   await db.query(`
     UPDATE employe
@@ -153,9 +147,8 @@ exports.updateMonProfilEmploye = async (id, data) => {
   ]);
 };
 
-// =============================
-// DELETE EMPLOYE
-// =============================
+
+// supprimer un employe
 exports.deleteEmploye = async (id) => {
 
   await db.query(`
@@ -164,9 +157,8 @@ exports.deleteEmploye = async (id) => {
   `, [id]);
 };
 
-// =============================
-// TOTAL EMPLOYES
-// =============================
+
+// le nombre total des employes
 exports.getTotalEmployes = async () => {
 
   const [rows] = await db.query(`
@@ -177,11 +169,9 @@ exports.getTotalEmployes = async () => {
   return rows[0];
 };
 
-// =============================
-// EMPLOYES PAR SERVICE
-// =============================
-exports.getEmployesByService = async () => {
 
+// le nombre d'employe par service
+exports.getEmployesByService = async () => {
   const [rows] = await db.query(`
     SELECT 
       service,
@@ -193,9 +183,8 @@ exports.getEmployesByService = async () => {
   return rows;
 };
 
-// =============================
-// EMPLOYES PAR ROLE
-// =============================
+
+// employes par role
 exports.getEmployesByRole = async () => {
 
   const [rows] = await db.query(`
@@ -211,9 +200,8 @@ exports.getEmployesByRole = async () => {
   return rows;
 };
 
-// =============================
-// EMPLOYES PAR TYPE
-// =============================
+
+// employes par type
 exports.getEmployesByType = async () => {
 
   const [rows] = await db.query(`
@@ -227,9 +215,8 @@ exports.getEmployesByType = async () => {
   return rows;
 };
 
-// =============================
-// EMPLOYES PAR GROUPE SANGUIN
-// =============================
+
+// employes par groupe sanguin
 exports.getEmployesByBloodGroup = async () => {
 
   const [rows] = await db.query(`
@@ -245,9 +232,8 @@ exports.getEmployesByBloodGroup = async () => {
   return rows;
 };
 
-// =============================
-// EMPLOYES PAR ALLERGIES
-// =============================
+
+// employes par allergies
 exports.getEmployesByAllergies = async () => {
 
   const [rows] = await db.query(`
@@ -263,9 +249,8 @@ exports.getEmployesByAllergies = async () => {
   return rows;
 };
 
-// =============================
-// EMPLOYES PAR ANTECEDENTS
-// =============================
+
+// employes par antecedents
 exports.getEmployesByAntecedents = async () => {
 
   const [rows] = await db.query(`
@@ -281,9 +266,8 @@ exports.getEmployesByAntecedents = async () => {
   return rows;
 };
 
-// =============================
-// EMPLOYES PAR APTITUDES
-// =============================
+
+// employes par aptitudes
 exports.getEmployesByAptitudes = async () => {
 
   const [rows] = await db.query(`
@@ -299,12 +283,9 @@ exports.getEmployesByAptitudes = async () => {
   return rows;
 };
 
-// =============================
-// GET PROFIL EMPLOYE BY USER ID
-// =============================
-exports.getProfilEmployeByUserId = async (id_utilisateur) => {
-  console.log("🔥 MODEL CALLED WITH USER ID:", id_utilisateur);
 
+// profil d'un employe par son id
+exports.getProfilEmployeByUserId = async (id_utilisateur) => {
   const [rows] = await db.query(`
     SELECT 
       e.id,
@@ -331,7 +312,7 @@ exports.getProfilEmployeByUserId = async (id_utilisateur) => {
     WHERE e.id_utilisateur = ?
   `, [id_utilisateur]);
 
-  console.log("🔥 SQL RESULT:", rows);
+  
 
   if (!rows || rows.length === 0) {
     return null;

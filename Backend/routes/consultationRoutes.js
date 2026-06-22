@@ -6,123 +6,62 @@ const controller = require("../controllers/consultationController");
 const authMiddleware = require("../middlewares/authMiddleware");
 const roleMiddleware = require("../middlewares/roleMiddleware");
 
-// =============================
-// STATS
-// ⚠️ TOUJOURS AVANT /:id
-// =============================
 
 router.get(
-  "/stats/patients/total",
-  authMiddleware,
-  roleMiddleware(["Medecin"]),
-  controller.getTotalPatientsByMedecin
+  "/stats/patients/total", authMiddleware, roleMiddleware(["Medecin"]), controller.getTotalPatientsByMedecin
 );
 router.get("/stats/today", authMiddleware, roleMiddleware(["Medecin"]), controller.getConsultationsToday);
 
 router.get("/stats/week", authMiddleware, roleMiddleware(["Medecin"]), controller.getConsultationsWeek);
 
 router.get("/stats/month", authMiddleware, roleMiddleware(["Medecin"]), controller.getConsultationsMonth);
-// TOTAL CONSULTATIONS
-router.get(
-  "/stats/total",
-  authMiddleware,
-  roleMiddleware(["Admin", "Medecin"]),
-  controller.getTotalConsultations
+
+router.get( "/stats/total", authMiddleware, roleMiddleware(["Admin", "Medecin"]), controller.getTotalConsultations
 );
 
 // CONSULTATIONS DU MEDECIN
-router.get(
-  "/stats/medecin",
-  authMiddleware,
-  roleMiddleware(["Medecin"]),
-  controller.getConsultationsByMedecin
+router.get("/stats/medecin", authMiddleware, roleMiddleware(["Medecin"]), controller.getConsultationsByMedecin
 );
 
 // PATIENTS CONSULTÉS PAR LE MEDECIN
 router.get("/stats/patients", authMiddleware, roleMiddleware(["Medecin"]), controller.getPatientsByMedecin);
 
 // CONSULTATIONS PAR MOTIF
-router.get(
-  "/stats/motifs",
-  authMiddleware,
-  roleMiddleware(["Admin", "Medecin"]),
-  controller.getConsultationsByMotif
+router.get("/stats/motifs", authMiddleware, roleMiddleware(["Admin", "Medecin"]), controller.getConsultationsByMotif
 );
 
 // CONSULTATIONS PAR DATE
-router.get(
-  "/stats/dates",
-  authMiddleware,
-  roleMiddleware(["Admin", "Medecin"]),
-  controller.getConsultationsByDate
+router.get("/stats/dates", authMiddleware, roleMiddleware(["Admin", "Medecin"]), controller.getConsultationsByDate
 );
 
-// =============================
+
 // GET CONSULTATIONS BY EMPLOYE
-// =============================
-router.get(
-  "/employe/:id",
-  authMiddleware,
-  roleMiddleware(["Admin", "Medecin", "Employe"]),
-  controller.getByEmploye
+router.get("/employe/:id", authMiddleware, roleMiddleware(["Admin", "Medecin", "Employe"]), controller.getByEmploye
 );
 
-// =============================
+
 // GET ALL CONSULTATIONS
-// =============================
-router.get(
-  "/",
-  authMiddleware,
-  roleMiddleware(["Admin", "Medecin"]),
-  controller.getAllConsultations
+router.get("/", authMiddleware, roleMiddleware(["Admin", "Medecin"]), controller.getAllConsultations
 );
 
-// =============================
-// GET CONSULTATION BY ID
-// ⚠️ TOUJOURS APRÈS LES ROUTES FIXES
-// =============================
-router.get(
-  "/:id",
-  authMiddleware,
-  roleMiddleware(["Admin", "Medecin", "Employe"]),
-  controller.getConsultationById
+
+router.get( "/:id", authMiddleware, roleMiddleware(["Admin", "Medecin", "Employe"]), controller.getConsultationById
 );
 
-// =============================
-// CREATE CONSULTATION
-// =============================
-router.post(
-  "/",
-  authMiddleware,
-  roleMiddleware(["Admin", "Medecin"]),
-  controller.createConsultation
+
+router.post("/", authMiddleware, roleMiddleware(["Admin", "Medecin"]), controller.createConsultation
 );
 
-// =============================
 // UPDATE CONSULTATION
-// =============================
-router.put(
-  "/:id",
-  authMiddleware,
-  roleMiddleware(["Admin", "Medecin"]),
-  controller.updateConsultation
+router.put( "/:id", authMiddleware,roleMiddleware(["Admin", "Medecin"]), controller.updateConsultation
 );
 
-router.put(
-  "/admin/:id",
-  authMiddleware,
-  roleMiddleware(["Admin"]),
-  controller.updateConsultationAdmin
+router.put("/admin/:id", authMiddleware, roleMiddleware(["Admin"]), controller.updateConsultationAdmin
 );
 
-// =============================
+
 // DELETE CONSULTATION
-// =============================
-router.delete(
-  "/:id",
-  authMiddleware,
-  roleMiddleware(["Admin"]),
-  controller.deleteConsultation
+router.delete("/:id", authMiddleware, roleMiddleware(["Admin"]), controller.deleteConsultation
 );
 
 module.exports = router;

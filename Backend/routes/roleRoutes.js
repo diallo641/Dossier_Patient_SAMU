@@ -6,9 +6,6 @@ const roleMiddleware = require("../middlewares/roleMiddleware");
 
 const roleController = require("../controllers/roleController");
 
-// =============================
-// ROLES ROUTES
-// =============================
 
 // LISTER TOUS LES ROLES
 router.get("/", authMiddleware, roleMiddleware(["Admin"]), roleController.getAllRoles);

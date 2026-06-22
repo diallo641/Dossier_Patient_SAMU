@@ -7,9 +7,8 @@ const authMiddleware = require("../middlewares/authMiddleware");
 const roleMiddleware = require("../middlewares/roleMiddleware");
 const upload = require("../middlewares/uploadMiddleware");
 
-// ==============================
+
 // CREATE FILE
-// ==============================
 router.post(
   "/",
   authMiddleware,
@@ -17,9 +16,8 @@ router.post(
   controller.createFichierMedical
 );
 
-// ==============================
+
 // GET ALL FILES
-// ==============================
 router.get(
   "/",
   authMiddleware,
@@ -27,9 +25,7 @@ router.get(
   controller.getAllFichiersMedicaux
 );
 
-// ==============================
 // GET FILE BY ID
-// ==============================
 router.get(
   "/:id",
   authMiddleware,
@@ -37,27 +33,24 @@ router.get(
   controller.getFichierMedicalById
 );
 
-// ==============================
+
 // GET FILES BY CONSULTATION
-// ==============================
 router.get(
   "/consultation/:id_consultation",
   authMiddleware,
   controller.getFichiersByConsultation
 );
 
-// ==============================
+
 // UPDATE FILE
-// ==============================
 router.put(
   "/:id",
   authMiddleware,
   controller.updateFichierMedical
 );
 
-// ==============================
+
 // DELETE FILE
-// ==============================
 router.delete(
   "/:id",
   authMiddleware,
