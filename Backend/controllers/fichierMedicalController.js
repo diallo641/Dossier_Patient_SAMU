@@ -67,6 +67,7 @@ const createFichierMedical = async (req, res) => {
     }
      console.log("req.files =", req.files);
      console.log("length =", req.files?.length);
+     console.log("BODY =", req.body);
 
     res.status(201).json({
       message: "Fichiers uploadés avec succès",

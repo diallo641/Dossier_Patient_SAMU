@@ -34,19 +34,17 @@ export default function ModifierConsultationMedecin() {
   const [filesByCategory, setFilesByCategory] = useState({});
   const [typeFichier, setTypeFichier] = useState("analyse");
 
-  // =====================
-  // LOAD CONSULTATION
-  // =====================
+  // LOAD
   useEffect(() => {
     const load = async () => {
       try {
         const data = await getConsultationById(id);
 
         setForm({
-          motif: data.motif || "",
-          diagnostic: data.diagnostic || "",
-          traitement: data.traitement || "",
-          observation: data.observation || "",
+          motif: data?.motif ?? "",
+          diagnostic: data?.diagnostic ?? "",
+          traitement: data?.traitement ?? "",
+          observation: data?.observation ?? "",
         });
       } catch (err) {
         console.error(err);
@@ -56,50 +54,56 @@ export default function ModifierConsultationMedecin() {
     load();
   }, [id]);
 
-  // =====================
-  // INPUT CHANGE
-  // =====================
+  // CHANGE TEXT
   const handleChange = (e) => {
     setForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.value ?? "",
     }));
   };
 
-  // =====================
-  // FILE CHANGE
-  // =====================
+  // FILES
   const handleFileChange = (e) => {
     const selected = Array.from(e.target.files || []);
+    if (!selected.length) return;
+
+    const categorie = typeFichier || "autre";
 
     setFilesByCategory((prev) => ({
       ...prev,
-      [typeFichier]: [...(prev[typeFichier] || []), ...selected],
+      [categorie]: [...(prev[categorie] || []), ...selected],
     }));
   };
 
-  // =====================
   // SUBMIT
-  // =====================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       setLoading(true);
 
-      await updateConsultation(id, form);
+      const consultationPayload = {
+        ...form,
+        description: form.observation || "",
+      };
 
-      const allFiles = Object.entries(filesByCategory);
+      await updateConsultation(id, consultationPayload);
 
-      if (allFiles.length > 0) {
+      const hasFiles = Object.values(filesByCategory || {})
+        .some((files) => files?.length > 0);
+
+      if (hasFiles) {
         setUploading(true);
 
         const formData = new FormData();
 
-        allFiles.forEach(([categorie, files]) => {
+        Object.entries(filesByCategory).forEach(([categorie, files]) => {
+          if (!files?.length) return;
+
           files.forEach((file) => {
             formData.append("fichiers", file);
-            formData.append("categories[]", categorie);
+            formData.append("categorie", categorie || "autre");
+            formData.append("description", form.observation || "");
           });
         });
 
@@ -127,14 +131,13 @@ export default function ModifierConsultationMedecin() {
       <SidebarMedecin />
 
       <div className="ml-64 flex-1 p-6 max-w-3xl">
-
         <h1 className="text-2xl font-bold mb-6">
           ✏️ Modifier la consultation
         </h1>
 
         <form onSubmit={handleSubmit} className="bg-white p-6 shadow rounded space-y-5">
 
-          {/* ================= MOTIF ================= */}
+          {/* MOTIF */}
           <div>
             <label className="flex items-center gap-2 font-semibold text-gray-700 mb-1">
               <ClipboardList size={16} className="text-blue-600" />
@@ -151,7 +154,7 @@ export default function ModifierConsultationMedecin() {
             />
           </div>
 
-          {/* ================= DIAGNOSTIC ================= */}
+          {/* DIAGNOSTIC */}
           <div>
             <label className="flex items-center gap-2 font-semibold text-gray-700 mb-1">
               <Stethoscope size={16} className="text-purple-600" />
@@ -167,7 +170,7 @@ export default function ModifierConsultationMedecin() {
             />
           </div>
 
-          {/* ================= TRAITEMENT ================= */}
+          {/* TRAITEMENT */}
           <div>
             <label className="flex items-center gap-2 font-semibold text-gray-700 mb-1">
               <Activity size={16} className="text-red-500" />
@@ -183,11 +186,11 @@ export default function ModifierConsultationMedecin() {
             />
           </div>
 
-          {/* ================= OBSERVATION ================= */}
+          {/* OBSERVATION */}
           <div>
             <label className="flex items-center gap-2 font-semibold text-gray-700 mb-1">
               <FileText size={16} className="text-orange-500" />
-              Observations
+              Observation médicale
             </label>
 
             <textarea
@@ -195,16 +198,16 @@ export default function ModifierConsultationMedecin() {
               value={form.observation}
               onChange={handleChange}
               className="w-full border p-2 rounded"
-              placeholder="Notes complémentaires..."
+              placeholder="Notes et observations..."
             />
           </div>
 
-          {/* ================= FILES ================= */}
+          {/* FILES */}
           <div className="border-t pt-4 space-y-3">
 
             <label className="flex items-center gap-2 font-bold text-gray-800">
               <Upload size={16} className="text-green-600" />
-              Ajouter des fichiers médicaux
+              Ajouter des fichiers (optionnel)
             </label>
 
             <select
@@ -228,19 +231,19 @@ export default function ModifierConsultationMedecin() {
             />
 
             {/* PREVIEW */}
-            {Object.entries(filesByCategory).map(([cat, files]) => (
+            {Object.entries(filesByCategory || {}).map(([cat, files]) => (
               <div key={cat} className="text-sm text-gray-600">
                 <b>📁 {cat}</b>
                 <ul className="ml-4 list-disc">
-                  {files.map((f, i) => (
-                    <li key={i}>{f.name}</li>
+                  {(files || []).map((f, i) => (
+                    <li key={i}>{f?.name}</li>
                   ))}
                 </ul>
               </div>
             ))}
           </div>
 
-          {/* ================= BUTTON ================= */}
+          {/* BUTTON */}
           <button
             type="submit"
             disabled={loading || uploading}

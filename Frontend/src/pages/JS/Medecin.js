@@ -194,4 +194,10 @@ export const uploadFichiersToConsultation = async (formData) => {
   return res.data;
 };
 
-
+// =====================
+// TOUS LES EMPLOYÉS (ADMIN / MÉDECIN)
+// =====================
+export const getAllEmployes = async () => {
+  const res = await axios.get(`${API}/employes`, getConfig());
+  return res.data.data || [];
+};

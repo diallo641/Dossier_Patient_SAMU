@@ -30,6 +30,7 @@ import ConsultationsMedecin from "./pages/Medecin/ConsultationsMedecin";
 import ListeDossierMedicaux from "./pages/Medecin/ListeDossierMedicaux";
 import DetailDossierMedical from "./pages/Medecin/DetailDossierMedical";
 import ActivitesMedecin from "./pages/Medecin/ActivitesMedecin";
+import NouvelleConsultationMedecin from "./pages/Medecin/NouvelleConsultationMedecin";
 import { AuthProvider } from "./context/AuthContext";
 
 export default function App() {
@@ -73,6 +74,7 @@ export default function App() {
           <Route path="/dossiers-medicaux" element={<ListeDossierMedicaux />} />
           <Route path="/dossier-medical/:id" element={<DetailDossierMedical />} />
           <Route path="/activites-medecin" element={<ActivitesMedecin />} />
+          <Route path="/medecin/consultation/nouvelle" element={<NouvelleConsultationMedecin />} />
           {/* fallback (optionnel mais pro) */}
           <Route path="*" element={<Navigate to="/" />} />
 

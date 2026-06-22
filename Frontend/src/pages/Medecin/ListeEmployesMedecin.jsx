@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SidebarMedecin from "../../composants/SidebarMedecin";
 import { Link } from "react-router-dom";
 import BoutonAjouterEmployeMedecin from "../../composants/BoutonAjouterEmployeMedecin";
+import BoutonAjouterConsultationMedecin from "../../composants/BoutonAjouterConsultationMedecin";
 
 import {
   getPatientsMedecin,
@@ -48,7 +49,11 @@ export default function ListePatientsMedecin() {
             Mes patients
           </h1>
 
-          <BoutonAjouterEmployeMedecin />
+          {/* ✅ BOUTONS AJOUTÉS ICI */}
+          <div className="flex gap-2">
+            <BoutonAjouterEmployeMedecin />
+            <BoutonAjouterConsultationMedecin />
+          </div>
         </div>
 
         {/* STATS */}
@@ -116,19 +121,18 @@ export default function ListePatientsMedecin() {
 
                 <div className="flex gap-2 mt-4">
                   <Link
-  to={`/medecin/patient/${e.id}`}
-  className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
->
-  Voir
-</Link>
-                  
+                    to={`/medecin/patient/${e.id}`}
+                    className="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700"
+                  >
+                    Voir
+                  </Link>
 
                   <Link
-  to={`/medecin/consultation/nouvelle/${e.id}`}
-  className="bg-emerald-600 text-white px-3 py-1 rounded text-sm hover:bg-emerald-700"
->
-  Consultation
-</Link>
+                    to={`/medecin/consultation/nouvelle/${e.id}`}
+                    className="bg-emerald-600 text-white px-3 py-1 rounded text-sm hover:bg-emerald-700"
+                  >
+                    Consultation
+                  </Link>
                 </div>
               </div>
             ))}

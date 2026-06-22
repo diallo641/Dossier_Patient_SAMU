@@ -32,7 +32,6 @@ const createFichierMedical = async (data) => {
   ];
 
   const [result] = await db.query(sql, values);
-
   return result;
 };
 
@@ -43,15 +42,15 @@ const getAllFichiersMedicaux = async () => {
   const sql = `
     SELECT 
       fm.*,
-      u.nom AS uploaded_by_nom
+      e.nom AS uploaded_by_nom,
+      e.prenom AS uploaded_by_prenom
     FROM fichier_medical fm
-    LEFT JOIN utilisateur u 
-      ON fm.uploaded_by = u.id
+    LEFT JOIN employe e 
+      ON fm.uploaded_by = e.id
     ORDER BY fm.date_upload DESC
   `;
 
   const [rows] = await db.query(sql);
-
   return rows;
 };
 
@@ -66,27 +65,31 @@ const getFichierMedicalById = async (id) => {
       e.prenom AS uploaded_by_prenom
     FROM fichier_medical fm
     LEFT JOIN employe e
-      ON fm.uploaded_by = e.id_utilisateur
+      ON fm.uploaded_by = e.id
     WHERE fm.id = ?
   `;
 
   const [rows] = await db.query(sql, [id]);
-
   return rows[0];
 };
+
 // ==============================
 // GET FILES BY CONSULTATION
 // ==============================
 const getFichiersByConsultation = async (id_consultation) => {
   const sql = `
-    SELECT *
-    FROM fichier_medical
-    WHERE id_consultation = ?
-    ORDER BY date_upload DESC
+    SELECT 
+      fm.*,
+      e.nom AS uploaded_by_nom,
+      e.prenom AS uploaded_by_prenom
+    FROM fichier_medical fm
+    LEFT JOIN employe e 
+      ON fm.uploaded_by = e.id
+    WHERE fm.id_consultation = ?
+    ORDER BY fm.date_upload DESC
   `;
 
   const [rows] = await db.query(sql, [id_consultation]);
-
   return rows;
 };
 
@@ -119,7 +122,6 @@ const updateFichierMedical = async (id, data) => {
   ];
 
   const [result] = await db.query(sql, values);
-
   return result;
 };
 
@@ -133,7 +135,6 @@ const deleteFichierMedical = async (id) => {
   `;
 
   const [result] = await db.query(sql, [id]);
-
   return result;
 };
 

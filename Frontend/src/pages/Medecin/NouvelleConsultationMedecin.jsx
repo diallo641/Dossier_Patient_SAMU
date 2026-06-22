@@ -1,24 +1,21 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import SidebarMedecin from "../../composants/SidebarMedecin";
 
 import {
   createConsultation,
   uploadFichiers,
-  getPatientById,
+  getAllEmployes,
 } from "../JS/Medecin";
 
-export default function AjouterConsultationMedecin() {
+export default function NouvelleConsultationMedecin() {
   const navigate = useNavigate();
-  const { idPatient } = useParams();
 
+  const [employes, setEmployes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  const [patient, setPatient] = useState(null);
-
-  // ✅ STRUCTURE CORRIGÉE
   const [filesByCategory, setFilesByCategory] = useState({});
   const [typeFichier, setTypeFichier] = useState("analyse");
 
@@ -33,28 +30,28 @@ export default function AjouterConsultationMedecin() {
     diagnostic: "",
     traitement: "",
     observation: "",
-    id_employe: idPatient || "",
+    id_employe: "",
     id_medecin: idMedecin || "",
   });
 
   // =====================
-  // LOAD PATIENT
+  // LOAD EMPLOYÉS
   // =====================
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await getPatientById(idPatient);
-        setPatient(data);
+        const data = await getAllEmployes();
+        setEmployes(data || []);
       } catch (err) {
         console.error(err);
       }
     };
 
     load();
-  }, [idPatient]);
+  }, []);
 
   // =====================
-  // INPUT
+  // INPUT CHANGE
   // =====================
   const handleChange = (e) => {
     setForm((prev) => ({
@@ -64,10 +61,12 @@ export default function AjouterConsultationMedecin() {
   };
 
   // =====================
-  // FILE CHANGE (IMPORTANT FIX)
+  // FILES
   // =====================
   const handleFileChange = (e) => {
     const selected = Array.from(e.target.files || []);
+
+    if (!typeFichier) return;
 
     setFilesByCategory((prev) => ({
       ...prev,
@@ -84,15 +83,18 @@ export default function AjouterConsultationMedecin() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!form.id_employe) {
+      alert("Veuillez sélectionner un employé");
+      return;
+    }
+
     try {
       setLoading(true);
 
-      // 1. CREATE CONSULTATION
       const res = await createConsultation(form);
       const idConsultation = res?.id || res?.data?.id;
 
-      // 2. UPLOAD FILES
-      const allFiles = Object.entries(filesByCategory);
+      const allFiles = Object.entries(filesByCategory || {});
 
       if (allFiles.length > 0) {
         setUploading(true);
@@ -100,9 +102,14 @@ export default function AjouterConsultationMedecin() {
         const formData = new FormData();
 
         allFiles.forEach(([categorie, files]) => {
+          // 🔥 PROTECTION CRITIQUE
+          if (!categorie || !files) return;
+
           files.forEach((file) => {
+            if (!file) return;
+
             formData.append("fichiers", file);
-            formData.append("categorie[]", categorie);
+            formData.append("categorie", categorie); // ✅ sans []
           });
         });
 
@@ -115,9 +122,7 @@ export default function AjouterConsultationMedecin() {
       }
 
       alert("Consultation créée avec succès");
-
-      navigate(`/medecin/patient/${idPatient}`);
-
+      navigate(`/medecin/patient/${form.id_employe}`);
     } catch (err) {
       console.error(err);
       alert("Erreur lors de l'enregistrement");
@@ -129,7 +134,6 @@ export default function AjouterConsultationMedecin() {
 
   return (
     <div className="flex min-h-screen bg-gray-100">
-
       <SidebarMedecin />
 
       <div className="ml-64 flex-1 p-6 max-w-3xl">
@@ -138,26 +142,67 @@ export default function AjouterConsultationMedecin() {
           Nouvelle consultation
         </h1>
 
-        {/* PATIENT */}
-        {patient && (
-          <div className="bg-white p-4 rounded shadow mb-4">
-            <p className="font-bold">
-              Patient : {patient.nom} {patient.prenom}
-            </p>
-          </div>
-        )}
+        {/* SELECT EMPLOYÉ */}
+        <div className="bg-white p-4 rounded shadow mb-4">
+          <label className="font-bold block mb-2">
+            Choisir un employé
+          </label>
 
+          <select
+            name="id_employe"
+            value={form.id_employe}
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+            required
+          >
+            <option value="">-- Sélectionner un employé --</option>
+
+            {employes.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.nom} {p.prenom}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* FORM */}
         <form onSubmit={handleSubmit} className="bg-white p-6 shadow rounded space-y-4">
 
-          <input type="date" name="date_consultation" onChange={handleChange} className="w-full border p-2 rounded" />
+          <input
+            type="date"
+            name="date_consultation"
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+          />
 
-          <input type="text" name="motif" placeholder="Motif" onChange={handleChange} className="w-full border p-2 rounded" />
+          <input
+            type="text"
+            name="motif"
+            placeholder="Motif"
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+          />
 
-          <textarea name="diagnostic" placeholder="Diagnostic" onChange={handleChange} className="w-full border p-2 rounded" />
+          <textarea
+            name="diagnostic"
+            placeholder="Diagnostic"
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+          />
 
-          <textarea name="traitement" placeholder="Traitement" onChange={handleChange} className="w-full border p-2 rounded" />
+          <textarea
+            name="traitement"
+            placeholder="Traitement"
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+          />
 
-          <textarea name="observation" placeholder="Observation" onChange={handleChange} className="w-full border p-2 rounded" />
+          <textarea
+            name="observation"
+            placeholder="Observation"
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+          />
 
           {/* FILES */}
           <div className="border-t pt-4 space-y-3">
@@ -185,7 +230,7 @@ export default function AjouterConsultationMedecin() {
             />
 
             {/* PREVIEW */}
-            {Object.entries(filesByCategory).map(([cat, files]) => (
+            {Object.entries(filesByCategory || {}).map(([cat, files]) => (
               <div key={cat} className="text-sm text-gray-600">
                 <b>{cat}</b>
                 <ul>
@@ -195,7 +240,6 @@ export default function AjouterConsultationMedecin() {
                 </ul>
               </div>
             ))}
-
           </div>
 
           <button
@@ -203,11 +247,14 @@ export default function AjouterConsultationMedecin() {
             disabled={loading || uploading}
             className="bg-emerald-600 text-white px-4 py-2 rounded w-full"
           >
-            {loading ? "Enregistrement..." : uploading ? "Upload..." : "Créer consultation"}
+            {loading
+              ? "Enregistrement..."
+              : uploading
+              ? "Upload..."
+              : "Créer consultation"}
           </button>
 
         </form>
-
       </div>
     </div>
   );
