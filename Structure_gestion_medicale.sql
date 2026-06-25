@@ -1,121 +1,162 @@
+-- =========================
+-- TABLE ROLE
+-- =========================
 
---
--- Table `consultation`
---
+DROP TABLE IF EXISTS role;
 
-DROP TABLE IF EXISTS `consultation`;
-CREATE TABLE `consultation` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `date_consultation` date NOT NULL,
-  `motif` text,
-  `diagnostic` text,
-  `traitement` text,
-  `observation` text,
-  `id_employe` int NOT NULL,
-  `id_medecin` int NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
- 
-) 
+CREATE TABLE role (
+  id INT NOT NULL AUTO_INCREMENT,
+  nom_role VARCHAR(50) NOT NULL UNIQUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB;
 
 
---
--- Table `employe`
---
+-- =========================
+-- TABLE UTILISATEUR
+-- =========================
 
-DROP TABLE IF EXISTS `employe`;
-CREATE TABLE `employe` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nom` varchar(100) NOT NULL,
-  `prenom` varchar(100) NOT NULL,
-  `poste` varchar(100) DEFAULT NULL,
-  `service` varchar(100) DEFAULT NULL,
-  `date_naissance` date DEFAULT NULL,
-  `telephone` varchar(20) DEFAULT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `type` varchar(50) DEFAULT NULL,
-  `id_utilisateur` int DEFAULT NULL,
-  `groupe_sanguin` varchar(5) DEFAULT NULL,
-  `allergies` text,
-  `antecedents_medicaux` text,
-  `aptitudes_medicales` text,
-  PRIMARY KEY (`id`),
-  
-) 
+DROP TABLE IF EXISTS utilisateur;
 
+CREATE TABLE utilisateur (
+  id INT NOT NULL AUTO_INCREMENT,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  mot_de_passe VARCHAR(255) NOT NULL,
+  id_role INT NOT NULL,
 
---
--- Table `fichier_medical`
---
+  reset_token VARCHAR(255),
+  reset_expires DATETIME,
 
-DROP TABLE IF EXISTS `fichier_medical`;
-CREATE TABLE `fichier_medical` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nom_fichier` varchar(255) DEFAULT NULL,
-  `chemin` varchar(255) DEFAULT NULL,
-  `type_fichier` varchar(50) DEFAULT NULL,
-  `taille_fichier` bigint DEFAULT NULL,
-  `categorie` enum('radio','scanner','analyse','ordonnance','certificat','echographie','autre') DEFAULT 'autre',
-  `description` text,
-  `extension` varchar(20) DEFAULT NULL,
-  `uploaded_by` int DEFAULT NULL,
-  `date_upload` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `id_consultation` int NOT NULL,
-  PRIMARY KEY (`id`),
- 
-)
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
---
--- Table `notification`
---
+  PRIMARY KEY (id),
 
-DROP TABLE IF EXISTS `notification`;
-CREATE TABLE `notification` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `message` text,
-  `date_notification` datetime DEFAULT NULL,
-  `statut` enum('non_lu','lu') DEFAULT 'non_lu',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `id_utilisateur` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  
-) 
-
---
--- Table `role`
---
-
-DROP TABLE IF EXISTS `role`;
-CREATE TABLE `role` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nom_role` varchar(50) NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `nom_role` (`nom_role`)
-) 
-
---
--- Table `utilisateur`
---
-
-DROP TABLE IF EXISTS `utilisateur`;
-CREATE TABLE `utilisateur` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `email` varchar(100) NOT NULL,
-  `mot_de_passe` varchar(255) NOT NULL,
-  `id_role` int NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `reset_token` varchar(255) DEFAULT NULL,
-  `reset_expires` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `email` (`email`),
-  
-) 
+  CONSTRAINT fk_utilisateur_role
+    FOREIGN KEY (id_role) REFERENCES role(id)
+    ON DELETE CASCADE
+) ENGINE=InnoDB;
 
 
+-- =========================
+-- TABLE EMPLOYE
+-- =========================
+
+DROP TABLE IF EXISTS employe;
+
+CREATE TABLE employe (
+  id INT NOT NULL AUTO_INCREMENT,
+  nom VARCHAR(100) NOT NULL,
+  prenom VARCHAR(100) NOT NULL,
+  poste VARCHAR(100),
+  service VARCHAR(100),
+  date_naissance DATE,
+  telephone VARCHAR(20),
+
+  type VARCHAR(50),
+  id_utilisateur INT,
+
+  groupe_sanguin VARCHAR(5),
+  allergies TEXT,
+  antecedents_medicaux TEXT,
+  aptitudes_medicales TEXT,
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (id),
+
+  CONSTRAINT fk_employe_utilisateur
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id)
+    ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+
+-- =========================
+-- TABLE CONSULTATION
+-- =========================
+
+DROP TABLE IF EXISTS consultation;
+
+CREATE TABLE consultation (
+  id INT NOT NULL AUTO_INCREMENT,
+  date_consultation DATE NOT NULL,
+  motif TEXT,
+  diagnostic TEXT,
+  traitement TEXT,
+  observation TEXT,
+
+  id_employe INT NOT NULL,
+  id_medecin INT NOT NULL,
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (id),
+
+  CONSTRAINT fk_consultation_employe
+    FOREIGN KEY (id_employe) REFERENCES employe(id)
+    ON DELETE CASCADE,
+
+  CONSTRAINT fk_consultation_medecin
+    FOREIGN KEY (id_medecin) REFERENCES employe(id)
+    ON DELETE SET NULL
+) ENGINE=InnoDB;
+
+
+-- =========================
+-- TABLE FICHIER_MEDICAL
+-- =========================
+
+DROP TABLE IF EXISTS fichier_medical;
+
+CREATE TABLE fichier_medical (
+  id INT NOT NULL AUTO_INCREMENT,
+  nom_fichier VARCHAR(255),
+  chemin VARCHAR(255),
+  type_fichier VARCHAR(50),
+  taille_fichier BIGINT,
+
+  categorie ENUM('radio','scanner','analyse','ordonnance','certificat','echographie','autre') DEFAULT 'autre',
+
+  description TEXT,
+  extension VARCHAR(20),
+  uploaded_by INT,
+
+  date_upload TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  id_consultation INT NOT NULL,
+
+  PRIMARY KEY (id),
+
+  CONSTRAINT fk_fichier_consultation
+    FOREIGN KEY (id_consultation) REFERENCES consultation(id)
+    ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================
+-- TABLE NOTIFICATION
+-- =========================
+
+DROP TABLE IF EXISTS notification;
+
+CREATE TABLE notification (
+  id INT NOT NULL AUTO_INCREMENT,
+  message TEXT,
+  date_notification DATETIME,
+  statut ENUM('non_lu','lu') DEFAULT 'non_lu',
+
+  id_utilisateur INT,
+
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (id),
+
+  CONSTRAINT fk_notification_utilisateur
+    FOREIGN KEY (id_utilisateur) REFERENCES utilisateur(id)
+    ON DELETE CASCADE
+) ENGINE=InnoDB;
