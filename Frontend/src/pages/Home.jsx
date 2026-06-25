@@ -18,7 +18,7 @@ export default function Home() {
             </div>
 
             <h1 className="font-bold text-blue-900 text-lg">
-              Médecine du Travail/SAMU National
+              Médecine du Travail
             </h1>
           </div>
 
@@ -153,7 +153,7 @@ export default function Home() {
             </div>
 
             <div className="mt-4 text-sm text-blue-800 space-y-2">
-              <p>📍 Structure : SAMU National</p>
+              <p>📍 Structure : </p>
               <p>📞 Téléphone : +221 77 000 00 00</p>
               <p>📧 Email : dr.dia@samu.sn</p>
               <p>🩺 Activités : consultations, bilans, suivi des employés</p>

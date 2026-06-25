@@ -7,7 +7,6 @@ const roleRoutes = require("./routes/roleRoutes");
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const employeRoutes = require("./routes/employeRoutes");
-const medecinRoutes = require("./routes/medecinRoutes");
 const consultationRoutes = require("./routes/consultationRoutes");
 const fichierMedicalRoutes = require("./routes/fichierMedicalRoutes");
 
@@ -23,7 +22,6 @@ app.use(express.json()); // pour lire JSON
 app.use("/api/roles", roleRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/test", require("./routes/testRoutes"));
 app.use("/api/employes", employeRoutes);
 app.use("/api/consultations", consultationRoutes);
 app.use("/api/fichiers", fichierMedicalRoutes);
